@@ -179,6 +179,8 @@ uint32_t alu_div(uint64_t src, uint64_t dest, size_t data_size)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
+	assert (src != 0);
+	return (uint32_t)(dest / src) & get_mask(data_size);
 #endif
 }
 
@@ -218,7 +220,8 @@ int32_t alu_imod(int64_t src, int64_t dest)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
-	assert (src )
+	assert (src != 0);
+	return (int32_t)(dest % src);
 #endif
 }
 
