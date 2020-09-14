@@ -327,10 +327,10 @@ uint32_t alu_sar(uint32_t src, uint32_t dest, size_t data_size)
 	if (src <= data_size)
 	    cpu.eflags.CF = high_sign;
 	uint32_t result = dest;
-	result = result & get_mask(data_size);
 	result = result >> src;
 	uint32_t number_or_for = 0xffffffff << (data_size - src);
 	result = result | number_or_for;
+	result = result & get_mask(data_size);
 	set_ZF(result,data_size);
 	set_PF(result);
 	set_SF(result,data_size);
