@@ -34,6 +34,7 @@ void set_OF(uint32_t src, uint32_t dest, uint32_t result, size_t data_size){
     result = (result >> (data_size - 1)) & 1;
     cpu.eflags.OF = (src && dest && !result) || (!src && !dest && result);
 }
+
 uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
 {
 #ifdef NEMU_REF_ALU
@@ -83,7 +84,8 @@ uint32_t alu_sub(uint32_t src, uint32_t dest, size_t data_size)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
-	uint32_t result = alu_add(~src + 1,dest,data_size);
+	uint32_t neg_src = ~src + 1;
+	uint32_t result = alu_add(neg_src, dest, data_size);
 	return result;
 #endif
 }
