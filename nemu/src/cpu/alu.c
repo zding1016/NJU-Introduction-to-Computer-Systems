@@ -1,8 +1,12 @@
 #include "cpu/cpu.h"
 
+uint32_t get_mask(size_t data_size){
+    return (0xffffffff >> (32-data_size));
+}
+
 //设置标志位
 void set_ZF(uint32_t result, size_t data_size){ 
-    result = result & (0xffffffff >> (32-data_size));
+    result = result & get_mask(data_size);
     uint32_t ans = (result == 0);
     cpu.eflags.ZF = ans;
 }
@@ -22,10 +26,8 @@ void set_SF(uint32_t result, size_t data_size){
     cpu.eflags.SF = ans;
 }
 
-void set_CF_add(uint32_t src, uint32_t result, size_t data_size){
-    result = sign_ext(result & (0xffffffff >> (32-data_size)),data_size);
-    src = sign_ext(src & (0xffffffff >> (32-data_size)),data_size);
-    cpu.eflags.CF = (result < src);
+void set_CF(uint32_t src, uint32_t dest, uint32_t result){
+    cpu.eflags.CF = (result < src) || (result < dest);
 }
 
 void set_OF(uint32_t src, uint32_t dest, uint32_t result, size_t data_size){
@@ -44,15 +46,15 @@ uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
-	src = src & (0xffffffff >> (32-data_size));
-	dest = dest & (0xffffffff >> (32-data_size));
+	src = src & get_mask(data_size);
+	dest = dest & get_mask(data_size);
 	uint32_t result = src + dest;
-	result = result & (0xffffffff >> (32-data_size));
+	result = result & get_mask(data_size);
 	set_ZF(result,data_size);
 	set_PF(result);
 	set_SF(result,data_size);
 	set_OF(src,dest,result,data_size);
-	set_CF_add(src,result,data_size);
+	set_CF(src,dest,result);
 	return result;
 #endif
 }
