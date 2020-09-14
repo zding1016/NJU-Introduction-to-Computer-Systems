@@ -301,9 +301,10 @@ uint32_t alu_shr(uint32_t src, uint32_t dest, size_t data_size)
 	return 0;*/
 	cpu.eflags.CF = 0;
 	if (src <= data_size)
-	    cpu.eflags.CF = dest >> (src - 1) & 1;
-	uint32_t result = dest >> src;
+	    cpu.eflags.CF = (dest >> (src - 1)) & 1;
+	uint32_t result = dest;
 	result = result & get_mask(data_size);
+	result = result >> src;
 	set_ZF(result,data_size);
 	set_PF(result);
 	set_SF(result,data_size);
