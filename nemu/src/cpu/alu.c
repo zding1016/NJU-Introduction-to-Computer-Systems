@@ -321,12 +321,13 @@ uint32_t alu_sar(uint32_t src, uint32_t dest, size_t data_size)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
-	uint32_t high_sign = (dest >> (src - 1)) & 1;
+	uint32_t high_sign = (dest >> (data_size - 1)) & 1;
 	if (!high_sign) return alu_shr(src, dest, data_size);
 	cpu.eflags.CF = 0;
 	if (src <= data_size)
-	    cpu.eflags.CF = high_sign;
+	    cpu.eflags.CF = (dest >> (src - 1)) & 1;
 	uint32_t result = dest;
+	result = result & get_mask(data_size);
 	result = result >> src;
 	uint32_t number_or_for = 0xffffffff << (data_size - src);
 	result = result | number_or_for;
