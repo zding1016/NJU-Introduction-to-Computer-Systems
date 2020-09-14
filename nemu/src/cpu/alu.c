@@ -26,11 +26,11 @@ void set_SF(uint32_t result, size_t data_size){
     cpu.eflags.SF = ans;
 }
 
-void set_CF(uint32_t src, uint32_t dest, uint32_t result){
+void set_CF_add(uint32_t src, uint32_t dest, uint32_t result){
     cpu.eflags.CF = (result < src) || (result < dest);
 }
 
-void set_OF(uint32_t src, uint32_t dest, uint32_t result, size_t data_size){
+void set_OF_ad(uint32_t src, uint32_t dest, uint32_t result, size_t data_size){
     src = (src >> (data_size - 1)) & 1;
     dest = (dest >> (data_size - 1)) & 1;
     result = (result >> (data_size - 1)) & 1;
@@ -53,8 +53,8 @@ uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
 	set_ZF(result,data_size);
 	set_PF(result);
 	set_SF(result,data_size);
-	set_OF(src,dest,result,data_size);
-	set_CF(src,dest,result);
+	set_OF_ad(src,dest,result,data_size);
+	set_CF_add(src,dest,result);
 	return result;
 #endif
 }
@@ -74,7 +74,7 @@ uint32_t alu_adc(uint32_t src, uint32_t dest, size_t data_size)
 	if (!CF_before) return result;
 	result = alu_add(result, CF_before, data_size);
 	if (CF_mid) cpu.eflags.CF = 1;
-	set_OF(src,dest,result,data_size);
+	set_OF_ad(src,dest,result,data_size);
 	return result;
 #endif
 }
@@ -88,10 +88,8 @@ uint32_t alu_sub(uint32_t src, uint32_t dest, size_t data_size)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
-	uint32_t neg_src = ~src + 1;
-	neg_src = neg_src & get_mask(data_size);
-	dest = dest & get_mask(data_size);
-	uint32_t result = alu_add(neg_src, dest, data_size);
+	uint32_t result = dest - src;
+	
 	return result;
 #endif
 }
@@ -105,7 +103,7 @@ uint32_t alu_sbb(uint32_t src, uint32_t dest, size_t data_size)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
-	uint32_t result = src - dest - cpu.eflags.CF;
+	uint32_t result = dest - src - cpu.eflags.CF;
 	
 	
 	return result;
