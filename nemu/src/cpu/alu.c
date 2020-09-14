@@ -48,7 +48,7 @@ void set_OF_sb(uint32_t src, uint32_t dest, uint32_t result, size_t data_size){
 void set_CF_sub(uint32_t src, uint32_t dest, size_t data_size){
     src = sign_ext(src & get_mask(data_size), data_size);
     dest = sign_ext(dest & get_mask(data_size), data_size);
-    cpu.eflags.CF = (src < dest);
+    cpu.eflags.CF = (dest < src);
 }
 
 uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
