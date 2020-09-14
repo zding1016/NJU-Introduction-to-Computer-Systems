@@ -1,7 +1,7 @@
 #include "cpu/cpu.h"
 
 //设置标志位
-void set_ZF(uint32_t result){ 
+void set_ZF(uint32_t result, size_t data_size){ 
     result = result & (0xffffffff >> (32-data_size));
     uint32_t ans = (result == 0);
     cpu.eflags.ZF = ans;
@@ -45,7 +45,7 @@ uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
 	return 0;*/
 	uint32_t result = src + dest;
 	result = result & (0xffffffff >> (32-data_size));
-	set_ZF(result);
+	set_ZF(result,data_size);
 	set_PF(result);
 	set_SF(result,data_size);
 	set_OF(src,dest,result,data_size);
