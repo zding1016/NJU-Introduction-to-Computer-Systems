@@ -89,6 +89,8 @@ uint32_t alu_sub(uint32_t src, uint32_t dest, size_t data_size)
 	assert(0);
 	return 0;*/
 	uint32_t neg_src = ~src + 1;
+	neg_src = neg_src & get_mask(data_size);
+	dest = dest & get_mask(data_size);
 	uint32_t result = alu_add(neg_src, dest, data_size);
 	return result;
 #endif
