@@ -152,7 +152,7 @@ uint64_t alu_mul(uint32_t src, uint32_t dest, size_t data_size)
 	assert(0);
 	return 0;*/
 	uint64_t result = (uint64_t) (src & get_mask(data_size)) * (dest & get_mask(data_size));
-	cpu.eflags.OF = cpu.eflags.CF = (result >> data_size) & 1;
+	cpu.eflags.OF = cpu.eflags.CF = (result >> data_size) && 1;
 	return result;
 #endif
 }
