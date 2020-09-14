@@ -299,11 +299,11 @@ uint32_t alu_shr(uint32_t src, uint32_t dest, size_t data_size)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
-	uint32_t result = dest >> src;
-	result = result & get_mask(data_size);
 	cpu.eflags.CF = 0;
 	if (src <= data_size)
 	    cpu.eflags.CF = dest >> (src - 1) & 1;
+	uint32_t result = dest >> src;
+	result = result & get_mask(data_size);
 	set_ZF(result,data_size);
 	set_PF(result);
 	set_SF(result,data_size);
