@@ -51,7 +51,7 @@ void set_CF_sub(uint32_t src, uint32_t dest, size_t data_size){
     cpu.eflags.CF = (dest < src);
 }
 
-void set_CF_sub(uint32_t src, uint32_t dest, size_t data_size){
+void set_CF_sbb(uint32_t src, uint32_t dest, size_t data_size){
     src = sign_ext(src & get_mask(data_size), data_size);
     dest = sign_ext(dest & get_mask(data_size), data_size);
     if (cpu.eflags.CF == 1)
