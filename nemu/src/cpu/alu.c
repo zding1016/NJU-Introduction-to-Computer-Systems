@@ -10,7 +10,7 @@ void set_PF(uint32_t result){
     result = result & 0xff;
     uint32_t ans = 0;
     for (int i = 0; i < 8; i++){
-        ans = ans + result & 1;
+        ans += result & 1;
         result = result >> 1;
     }
     cpu.eflags.PF = (ans % 2 == 0);
@@ -46,7 +46,7 @@ uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
 	set_ZF(result);
 	set_CF_add(result);
 	set_PF(result);
-	set_OF(result);
+	set_OF(src,dest,result,data_size);
 	set_SF(result);
 	result = result & (0xffffffff >> (32-data_size));
 	return result;
