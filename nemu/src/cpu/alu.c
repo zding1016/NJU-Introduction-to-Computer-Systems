@@ -51,6 +51,15 @@ void set_CF_sub(uint32_t src, uint32_t dest, size_t data_size){
     cpu.eflags.CF = (dest < src);
 }
 
+void set_CF_sub(uint32_t src, uint32_t dest, size_t data_size){
+    src = sign_ext(src & get_mask(data_size), data_size);
+    dest = sign_ext(dest & get_mask(data_size), data_size);
+    if (cpu.eflags.CF == 1)
+        cpu.eflags.CF = (dest <= src);
+    else
+        cpu.eflags.CF = (dest < src);
+}
+
 uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
 {
 #ifdef NEMU_REF_ALU
@@ -122,13 +131,13 @@ uint32_t alu_sbb(uint32_t src, uint32_t dest, size_t data_size)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
-	uint32_t CF_before = cpu.eflags.CF;
-	uint32_t result = alu_sub(src, dest, data_size);
-	uint32_t CF_mid = cpu.eflags.CF;
-	if (!CF_before) return result;
-	result = alu_sub(result, CF_before, data_size);
-	if (CF_mid) cpu.eflags.CF = 1;
+	uint32_t result = dest - src - cpu.eflags.CF;
+	result = result & get_mask(data_size);
+	set_ZF(result,data_size);
+	set_PF(result);
+	set_SF(result,data_size);
 	set_OF_sb(src,dest,result,data_size);
+	set_CF_sbb(src, dest, data_size);
 	return result;
 #endif
 }
