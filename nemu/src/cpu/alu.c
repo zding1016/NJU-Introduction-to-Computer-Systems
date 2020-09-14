@@ -122,9 +122,13 @@ uint32_t alu_sbb(uint32_t src, uint32_t dest, size_t data_size)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
-	uint32_t result = dest - src - cpu.eflags.CF;
-	
-	
+	uint32_t CF_before = cpu.eflags.CF;
+	uint32_t result = alu_sub(src, dest, data_size);
+	uint32_t CF_mid = cpu.eflags.CF;
+	if (!CF_before) return result;
+	result = alu_sub(result, CF_before, data_size);
+	if (CF_mid) cpu.eflags.CF = 1;
+	set_OF_sb(src,dest,result,data_size);
 	return result;
 #endif
 }
