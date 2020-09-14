@@ -9,7 +9,8 @@ void set_SF(uint32_t result, size_t data_size);
 void set_PF(uint32_t result);
 void set_CF_add(uint32_t src, uint32_t dest, uint32_t result);
 void set_OF_ad(uint32_t src, uint32_t dest, uint32_t result, size_t data_size);
-
+void set_CF_sub(uint32_t src, uint32_t dest, size_t data_size);
+void set_OF_sb(uint32_t src, uint32_t dest, uint32_t result, size_t data_size);
 
 
 
