@@ -2,6 +2,7 @@
 
 //设置标志位
 void set_ZF(uint32_t result){ 
+    result = result & (0xffffffff >> (32-data_size));
     uint32_t ans = (result == 0);
     cpu.eflags.ZF = ans;
 }
@@ -45,10 +46,10 @@ uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
 	uint32_t result = src + dest;
 	result = result & (0xffffffff >> (32-data_size));
 	set_ZF(result);
-	set_CF_add(src,result,data_size);
 	set_PF(result);
-	set_OF(src,dest,result,data_size);
 	set_SF(result,data_size);
+	set_OF(src,dest,result,data_size);
+	set_CF_add(src,result,data_size);
 	return result;
 #endif
 }
@@ -62,9 +63,13 @@ uint32_t alu_adc(uint32_t src, uint32_t dest, size_t data_size)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
-	uint32_t result = src + dest + cpu.eflags.CF;
-	
-	
+	uint32_t CF_before = cpu.eflags.CF;
+	uint32_t result = alu_add(src, dest, data_size);
+	uint32_t CF_mid = cpu.eflags.CF;
+	if (!CF_before) return result;
+	result = alu_add(result, CF, data_size);
+	if (CF_mid) cpu.eflags.CF = 1;
+	set_OF(src,dest,result,data_size);
 	return result;
 #endif
 }
