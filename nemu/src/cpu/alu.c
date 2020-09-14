@@ -67,7 +67,7 @@ uint32_t alu_adc(uint32_t src, uint32_t dest, size_t data_size)
 	uint32_t result = alu_add(src, dest, data_size);
 	uint32_t CF_mid = cpu.eflags.CF;
 	if (!CF_before) return result;
-	result = alu_add(result, CF, data_size);
+	result = alu_add(result, CF_before, data_size);
 	if (CF_mid) cpu.eflags.CF = 1;
 	set_OF(src,dest,result,data_size);
 	return result;
