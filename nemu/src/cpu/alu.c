@@ -44,10 +44,10 @@ uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
 	return 0;*/
 	uint32_t result = src + dest;
 	set_ZF(result);
-	set_CF_add(result);
+	set_CF_add(src,result,data_size);
 	set_PF(result);
 	set_OF(src,dest,result,data_size);
-	set_SF(result);
+	set_SF(result,data_size);
 	result = result & (0xffffffff >> (32-data_size));
 	return result;
 #endif
