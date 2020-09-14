@@ -84,7 +84,10 @@ uint32_t alu_sub(uint32_t src, uint32_t dest, size_t data_size)
 	assert(0);
 	return 0;*/
 	uint32_t result = src - dest;
-	
+	result = result & (0xffffffff >> (32-data_size));
+	set_ZF(result,data_size);
+	set_PF(result);
+	set_SF(result,data_size);
 	
 	return result;
 #endif
