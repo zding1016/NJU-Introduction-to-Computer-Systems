@@ -11,7 +11,7 @@ inline uint32_t internal_normalize(uint32_t sign, int32_t exp, uint64_t sig_grs)
 
 	// normalization
 	bool overflow = false; // true if the result is INFINITY or 0 during normalize
-
+    uint32_t sticky_bit = sig_grs & 1;
 	if ((sig_grs >> (23 + 3)) > 1 || exp < 0)
 	{
 		// normalize toward right
@@ -25,7 +25,7 @@ inline uint32_t internal_normalize(uint32_t sign, int32_t exp, uint64_t sig_grs)
 			/*printf("\e[0;31mPlease implement me at fpu.c\e[0m\n");
 			fflush(stdout);
 			assert(0);*/
-			uint32_t sticky_bit = sig_grs & 1;
+			sticky_bit = sticky_bit | (sig_grs & 1);
 			sig_grs = sig_grs >> 1;
 			sig_grs = sig_grs | sticky_bit;
 			exp++;
@@ -49,7 +49,7 @@ inline uint32_t internal_normalize(uint32_t sign, int32_t exp, uint64_t sig_grs)
 			/*printf("\e[0;31mPlease implement me at fpu.c\e[0m\n");
 			fflush(stdout);
 			assert(0);*/
-			uint32_t sticky_bit = sig_grs & 1;
+			sticky_bit = sticky_bit | (sig_grs & 1);
 			sig_grs = sig_grs >> 1;
 			sig_grs = sig_grs | sticky_bit;
 		}
@@ -83,7 +83,7 @@ inline uint32_t internal_normalize(uint32_t sign, int32_t exp, uint64_t sig_grs)
 			/*printf("\e[0;31mPlease implement me at fpu.c\e[0m\n");
 			fflush(stdout);
 			assert(0);*/
-			uint32_t sticky_bit = sig_grs & 1;
+			sticky_bit = sticky_bit | (sig_grs & 1);
 			sig_grs = sig_grs >> 1;
 			sig_grs = sig_grs | sticky_bit;
 		}
