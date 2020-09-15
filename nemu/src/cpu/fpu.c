@@ -105,7 +105,7 @@ inline uint32_t internal_normalize(uint32_t sign, int32_t exp, uint64_t sig_grs)
 		if (last_three_bit > 4){
 		    sig_grs++;
 		}
-		else if ((last_three_bit == 4) && (last_three_bit & 0x1 != 0)){
+		else if ((last_three_bit == 4) && ((last_three_bit & 0x1) != 0)){
 		    sig_grs++;
 		} 
 		if ((sig_grs >> 23 != 1) && exp != 0){
