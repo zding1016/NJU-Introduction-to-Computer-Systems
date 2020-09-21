@@ -3,5 +3,7 @@
 /*
 Put the declarations of `call' instructions here.
 */
+make_instr_func(call);
+
 
 #endif

@@ -2,3 +2,6 @@
 /*
 Put the implementations of `call' instructions here.
 */
+make_instr_func(call){
+    
+}
