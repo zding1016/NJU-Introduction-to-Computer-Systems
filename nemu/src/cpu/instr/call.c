@@ -15,4 +15,5 @@ make_instr_func(call){
     dest.val = eip + 1 + data_size / 8;
     operand_write(&dest);
     cpu.eip = eip + src.val + 1 + data_size / 8;
+    return 0;
 }
