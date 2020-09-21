@@ -3,5 +3,8 @@
 /*
 Put the declarations of `add' instructions here.
 */
+make_instr_func(add_i_rm_b);
+make_instr_func(add_i_rm_v);
+make_instr_func(add_i_rm_vb);
 
 #endif
