@@ -21,5 +21,6 @@ make_instr_func(call){
     
     operand_write(&opr_dest);
     cpu.eip = eip + offset;
+    print_asm_0("call","", 2);
     return 0;
 }
