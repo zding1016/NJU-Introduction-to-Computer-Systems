@@ -186,7 +186,7 @@ uint32_t alu_div(uint64_t src, uint64_t dest, size_t data_size)
 	dest = dest & get_mask(data_size);
 	src = src & get_mask(data_size);
 	uint32_t result = dest / src;
-	assert ((result >> data_size) & 1 == 0);
+	assert ((result >> data_size) & 0x1 == 0);
 	return (uint32_t)(dest / src) & get_mask(data_size);
 #endif
 }
@@ -205,7 +205,7 @@ int32_t alu_idiv(int64_t src, int64_t dest, size_t data_size)
 	dest = dest & get_mask(data_size);
 	src = src & get_mask(data_size);
 	int32_t result = dest / src;
-	assert ((result >> data_size) & 1 == 0);
+	assert ((result >> data_size) & 0x1 == 0);
 	return result;
 #endif
 }
