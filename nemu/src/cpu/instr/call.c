@@ -3,17 +3,23 @@
 Put the implementations of `call' instructions here.
 */
 make_instr_func(call){
-    OPERAND src, dest;
+    OPERAND src;
     src.type = OPR_IMM;
-    src.addr = cpu.eip + 1;
+    src.addr = eip + 1;
     src.data_size = data_size;
     operand_read(&src);
+    
+    int offset = sign_ext(src.val, data_size);
+    
     cpu.esp = cpu.esp - (data_size / 8);
-    dest.data_size = data_size;
-    dest.type = OPR_MEM;
-    dest.addr = cpu.esp;
-    dest.val = cpu.eip + 1 + data_size / 8;
-    operand_write(&dest);
-    cpu.eip = cpu.eip + sign_ext(src.val, data_size) + 1 + data_size / 8;
+    opr_dest.data_size = 32;
+    opr_dest.type = OPR_MEM;
+    cpu.esp = cpu.esp - (32 / 8);
+    opr_dest.addr = cpu.esp;
+    eip = eip + 1 + data_size / 8;
+    opr_dest.val = eip;
+    
+    operand_write(&opr_dest);
+    cpu.eip = eip + offset;
     return 0;
 }
