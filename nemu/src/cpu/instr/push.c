@@ -11,6 +11,7 @@ static void instr_execute_1op(){
     dest.val = sign_ext(opr_src.val, opr_src.data_size);
     cpu.esp = cpu.esp - (data_size) / 8;
     dest.addr = cpu.esp;
+    dest.sreg = SREG_CS;
     operand_write(&dest);
 }
 
