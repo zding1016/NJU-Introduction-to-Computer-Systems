@@ -7,7 +7,7 @@ make_instr_func(call){
     src.type = OPR_IMM;
     src.addr = cup.eip + 1;
     src.data_size = data_size;
-    operand_read(src);
+    operand_read(&src);
     cpu.esp = cpu.esp - (data_size / 8);
     dest.data_size = data_size;
     dest.type = OPR_MEM;
