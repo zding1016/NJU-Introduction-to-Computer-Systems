@@ -9,9 +9,8 @@ static void instr_execute_1op(){
     dest.type = OPR_MEM;
     dest.data_size = data_size;
     dest.val = sign_ext(opr_src.val, opr_src.data_size);
-    cpu.eip = cpu.eip - (data_size) / 8;
-    dest.addr = cpu.eip;
-    dest.sreg = SREG_CS;
+    cpu.esp = cpu.esp - (data_size) / 8;
+    dest.addr = cpu.esp;
     operand_write(&dest);
 }
 
