@@ -69,7 +69,7 @@ instr_func opcode_entry[256] = {
 
 /* 0x80 */
 instr_func group_1_b_entry[8] =
-    {inv, inv, inv, inv, inv, inv, inv, cmp_i2rm_b};
+    {add_i2rm_b, inv, inv, inv, inv, inv, inv, cmp_i2rm_b};
 
 /* 0x81 */
 instr_func group_1_v_entry[8] =
@@ -77,7 +77,7 @@ instr_func group_1_v_entry[8] =
 
 /* 0x83 */
 instr_func group_1_bv_entry[8] =
-    {inv, inv, inv, inv, inv, inv, inv, cmp_i2rm_bv};
+    {add_i2rm_vb, inv, inv, inv, inv, inv, inv, cmp_i2rm_bv};
 
 /* 0xc0 */
 instr_func group_2_b_entry[8] =
