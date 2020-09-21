@@ -8,7 +8,7 @@ static void instr_execute_1op(){
     operand_read(&opr_src);
     dest.type = OPR_MEM;
     dest.data_size = data_size;
-    dest.val = opr_src.val;
+    dest.val = sign_ext(opr_src.val, opr_src.data_size);
     cpu.esp = cpu.esp - (data_size) / 8;
     dest.addr = cpu.esp;
     operand_write(&dest);
