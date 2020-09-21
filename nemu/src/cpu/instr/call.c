@@ -9,6 +9,7 @@ make_instr_func(call){
     src.data_size = data_size;
     operand_read(&src);
     
+    print_asm_2("call","", 1+data_size/8 ,&src);
     int offset = sign_ext(src.val, data_size);
     
     cpu.esp = cpu.esp - (data_size / 8);
@@ -21,6 +22,5 @@ make_instr_func(call){
     
     operand_write(&opr_dest);
     cpu.eip = eip + offset;
-    print_asm_0("call","", 2);
     return 0;
 }
