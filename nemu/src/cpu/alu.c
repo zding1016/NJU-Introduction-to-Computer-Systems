@@ -181,7 +181,7 @@ uint32_t alu_div(uint64_t src, uint64_t dest, size_t data_size)
 	assert(0);
 	return 0;*/
 	assert (src != 0);(
-	return (uint32_t)((dest & get_mask(data_size)) / (src & get_mask(data_size))) & get_mask(data_size);
+	return (uint32_t)(dest / src) & get_mask(data_size);
 #endif
 }
 
