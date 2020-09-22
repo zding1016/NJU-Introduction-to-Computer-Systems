@@ -24,3 +24,6 @@ Tue Sep 22 21:00:24 CST 2020
 make-[1]: Entering directory '/home/pa191220177/pa2020_fall/kernel'
 make-[1]: 'kernel' is up to date.
 make-[1]: Leaving directory '/home/pa191220177/pa2020_fall/kernel'
+./nemu/nemu --testcase hello-str
+NEMU load and execute img: [1m[32m./testcase/bin/hello-str.img[0m  elf: [1m[36m./testcase/bin/hello-str[0m
+(nemu) 
