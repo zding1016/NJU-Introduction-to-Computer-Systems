@@ -13,7 +13,7 @@ make_instr_func(call){
     int offset = sign_ext(src.val, data_size);
     
     cpu.esp = cpu.esp - (data_size / 8);
-    opr_dest.data_size = 32;
+    opr_dest.data_size = data_size;
     opr_dest.type = OPR_MEM;
     cpu.esp = cpu.esp - (32 / 8);
     opr_dest.addr = cpu.esp;
