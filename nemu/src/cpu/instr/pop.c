@@ -9,7 +9,6 @@ static void instr_execute_1op(){
     operand_read(&opr_src);
     
     cpu.esp += (data_size / 8);
-    opr_dest.val = sign_ext(opr_src.val, opr_src.data_size);
     operand_write(&opr_dest);
 }
 
