@@ -2,7 +2,7 @@
 /*
 Put the implementations of `call' instructions here.
 */
-make_instr_func(call){
+make_instr_func(call_near){
     OPERAND src;
     src.type = OPR_IMM;
     src.addr = eip + 1;
