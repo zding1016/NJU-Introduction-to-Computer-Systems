@@ -2,7 +2,7 @@
 /*
 Put the implementations of `sbb' instructions here.
 */
-static void instr_execute_func(){
+static void instr_execute_2op(){
     operand_read(&opr_src);
     operand_read(&opr_dest);
     opr_dest.val = alu_sbb(opr_src.val, opr_dest.val, data_size);
