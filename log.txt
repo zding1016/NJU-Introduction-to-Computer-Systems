@@ -1,3 +1,24 @@
 ------make------
 1600764292620
 Tue Sep 22 16:44:52 CST 2020
+cd nemu && make
+------make------
+1600764292881
+Tue Sep 22 16:44:52 CST 2020
+make-[1]: Entering directory '/home/pa191220177/pa2020_fall/nemu'
+make-[1]: 'nemu' is up to date.
+make-[1]: Leaving directory '/home/pa191220177/pa2020_fall/nemu'
+cd testcase && make
+------make------
+1600764292906
+Tue Sep 22 16:44:52 CST 2020
+make-[1]: Entering directory '/home/pa191220177/pa2020_fall/testcase'
+gcc -ggdb3 -MMD -MP -Wall -m32 -march=i386 -fno-builtin -fno-stack-protector -I../include -I../libs/newlib/include -c -o src/start.o start.S	
+make-[1]: Leaving directory '/home/pa191220177/pa2020_fall/testcase'
+cd kernel && make
+------make------
+1600764292943
+Tue Sep 22 16:44:52 CST 2020
+make-[1]: Entering directory '/home/pa191220177/pa2020_fall/kernel'
+make-[1]: 'kernel' is up to date.
+make-[1]: Leaving directory '/home/pa191220177/pa2020_fall/kernel'
