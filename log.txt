@@ -34,3 +34,24 @@ Tue Sep 22 08:48:17 CST 2020
 make-[1]: Entering directory '/home/pa191220177/pa2020_fall/kernel'
 make-[1]: 'kernel' is up to date.
 make-[1]: Leaving directory '/home/pa191220177/pa2020_fall/kernel'
+./nemu/nemu --testcase add
+NEMU load and execute img: [1m[32m./testcase/bin/add.img[0m  elf: [1m[36m./testcase/bin/add[0m
+(nemu) si
+00030000:   e9 00 00 00 00                            jmp $0x0
+(nemu) si
+00030005:   55                                        pushl %ebp
+(nemu) si
+00030006:   89 e5                                     movl %esp, %ebp
+(nemu) si
+00030008:   53                                        pushl %ebx
+(nemu) si
+00030009:   83 ec 10 e8 8f 00                         subl $0x8fe810, %esp
+(nemu) si
+0003000f:   00 00                                     addb %al, (%eax)
+(nemu) si
+00030011:   81 c2 ef 2f 00 00                         addl $0x2fef, %edx
+(nemu) si
+00030017:   c7 45 f0 00 00 00 00                      movl $0x0, -0x10(%ebp)
+(nemu) si
+0003001e:   c7 45 f8 00 00 00 00                      movl $0x0, -0x8(%ebp)
+(nemu) exit
