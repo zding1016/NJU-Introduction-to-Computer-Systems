@@ -33,3 +33,69 @@ Tue Sep 22 09:35:41 CST 2020
 make-[1]: Entering directory '/home/pa191220177/pa2020_fall/kernel'
 make-[1]: 'kernel' is up to date.
 make-[1]: Leaving directory '/home/pa191220177/pa2020_fall/kernel'
+./nemu/nemu --testcase add-longlong
+NEMU load and execute img: [1m[32m./testcase/bin/add-longlong.img[0m  elf: [1m[36m./testcase/bin/add-longlong[0m
+(nemu) si
+00030000:   e9 4b 00 00 00                            jmp $0x4b
+(nemu) si
+00030050:   8d 4c 24 04                               leal 0x4(%esp), %ecx
+(nemu) si
+00030054:   83 e4 f8                                  andl $0xf8, %esp
+(nemu) si
+00030057:   ff 71 fc                                  pushl -0x4(%ecx)
+(nemu) si
+0003005a:   55                                        pushl %ebp
+(nemu) si
+0003005b:   89 e5                                     movl %esp, %ebp
+(nemu) si
+0003005d:   57                                        pushl %edi
+(nemu) si
+0003005e:   56                                        pushl %esi
+(nemu) si
+0003005f:   53                                        pushl %ebx
+(nemu) si
+00030060:   51                                        pushl %ecx
+(nemu) si
+00030061:   83 ec 18                                  subl $0x18, %esp
+(nemu) si
+00030064:   e8 c0 00 00 00                            call $0xc0
+(nemu) si
+00030129:   8b 34 24                                  movl (%esp), %esi
+(nemu) si
+00030069:   81                                        ret
+(nemu) si
+00030069:   81 c6 97 2f 00 00                         addl $0x2f97, %esi
+(nemu) si
+0003006f:   c7 45 e4 00 00 00 00                      movl $0x0, -0x1c(%ebp)
+(nemu) si
+00030076:   c7 45 ec 00 00 00 00                      movl $0x0, -0x14(%ebp)
+(nemu) si
+0003007d:   e9 80 00 00 00                            jmp $0x80
+(nemu) si
+00030102:   8b 45 ec                                  movl -0x14(%ebp), %eax
+(nemu) si
+00030105:   83 f8 07                                  cmpl $0x7, %eax
+(nemu) si
+86invalid opcode(eip = 0x00030109): 86 74 ff ff ff b8 00 00 ...
+
+There are two cases which will trigger this unexpected exception:
+1. The instruction at eip = 0x00030109 is not implemented.
+2. Something is implemented incorrectly.
+Find this eip value(0x00030109) in the disassembling result to distinguish which case it is.
+
+[1;31mIf it is the first case, see
+ _ ____   ___    __    __  __                         _ 
+(_)___ \ / _ \  / /   |  \/  |                       | |
+ _  __) | (_) |/ /_   | \  / | __ _ _ __  _   _  __ _| |
+| ||__ < > _ <| '_ \  | |\/| |/ _` | '_ \| | | |/ _` | |
+| |___) | (_) | (_) | | |  | | (_| | | | | |_| | (_| | |
+|_|____/ \___/ \___/  |_|  |_|\__,_|_| |_|\__,_|\__,_|_|
+
+for more details.
+
+If it is the second case, remember:
+* The machine is always right!
+* Every line of untested code is always wrong![0m
+
+nemu: src/cpu/instr/inv.c:60: inv: Assertion `0' failed.
+make-: *** [Makefile:15: run] Aborted (core dumped)
