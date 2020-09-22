@@ -24,3 +24,8 @@ Tue Sep 22 20:55:19 CST 2020
 make-[1]: Entering directory '/home/pa191220177/pa2020_fall/kernel'
 make-[1]: 'kernel' is up to date.
 make-[1]: Leaving directory '/home/pa191220177/pa2020_fall/kernel'
+./nemu/nemu --testcase movsx
+NEMU load and execute img: [1m[32m./testcase/bin/movsx.img[0m  elf: [1m[36m./testcase/bin/movsx[0m
+(nemu) e quit
+Unknown user command [0;31mquit[0m
+(nemu) exit
