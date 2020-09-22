@@ -22,3 +22,207 @@ Tue Sep 22 16:44:52 CST 2020
 make-[1]: Entering directory '/home/pa191220177/pa2020_fall/kernel'
 make-[1]: 'kernel' is up to date.
 make-[1]: Leaving directory '/home/pa191220177/pa2020_fall/kernel'
+./nemu/nemu --testcase add-longlong
+NEMU load and execute img: [1m[32m./testcase/bin/add-longlong.img[0m  elf: [1m[36m./testcase/bin/add-longlong[0m
+(nemu) si
+00030000:   e9 4b 00 00 00                            jmp $0x4b
+(nemu) si
+00030050:   8d 4c 24 04                               leal 0x4(%esp), %ecx
+(nemu) si
+00030054:   83 e4 f8                                  andl $0xf8, %esp
+(nemu) si
+00030057:   ff 71 fc                                  pushl -0x4(%ecx)
+(nemu) si
+0003005a:   55                                        pushl %ebp
+(nemu) si
+0003005b:   89 e5                                     movl %esp, %ebp
+(nemu) si
+0003005d:   57                                        pushl %edi
+(nemu) is  si
+0003005e:   56                                        pushl %esi
+(nemu) si
+0003005f:   53                                        pushl %ebx
+(nemu) si
+00030060:   51                                        pushl %ecx
+(nemu) si
+00030061:   83 ec 18                                  subl $0x18, %esp
+(nemu) si
+00030064:   e8 c0 00 00 00                            call $0xc0
+(nemu) si
+00030129:   8b 34 24                                  movl (%esp), %esi
+(nemu) si
+0003012c:   c3                                        ret
+(nemu) si
+00030069:   81 c6 97 2f 00 00                         addl $0x2f97, %esi
+(nemu) si
+0003006f:   c7 45 e4 00 00 00 00                      movl $0x0, -0x1c(%ebp)
+(nemu) si
+00030076:   c7 45 ec 00 00 00 00                      movl $0x0, -0x14(%ebp)
+(nemu) si
+0003007d:   e9 80 00 00 00                            jmp $0x80
+(nemu) sis
+Unknown user command [0;31msis[0m
+(nemu) is
+Unknown user command [0;31mis[0m
+(nemu) si
+00030102:   8b 45 ec                                  movl -0x14(%ebp), %eax
+(nemu) sis
+Unknown user command [0;31msis[0m
+(nemu) sis
+Unknown user command [0;31msis[0m
+(nemu) si
+00030105:   83 f8 07                                  cmpl $0x7, %eax
+(nemu) sis
+Unknown user command [0;31msis[0m
+(nemu) is
+Unknown user command [0;31mis[0m
+(nemu) sis
+Unknown user command [0;31msis[0m
+(nemu) is
+Unknown user command [0;31mis[0m
+(nemu) is
+Unknown user command [0;31mis[0m
+(nemu) sis
+Unknown user command [0;31msis[0m
+(nemu) is
+Unknown user command [0;31mis[0m
+(nemu) sis
+Unknown user command [0;31msis[0m
+(nemu) is
+Unknown user command [0;31mis[0m
+(nemu) sis
+Unknown user command [0;31msis[0m
+(nemu) si
+00030108:   0f 86 74 ff ff                            jna $0xffffff74
+(nemu) si
+00030082:   c7 45 e8 00 00 00 00                      movl $0x0, -0x18(%ebp)
+(nemu) sis
+Unknown user command [0;31msis[0m
+(nemu) is
+Unknown user command [0;31mis[0m
+(nemu) si
+00030089:   eb 6c                                     jmp $0x6c
+(nemu) si
+000300f7:   8b 45 e8                                  movl -0x18(%ebp), %eax
+(nemu) si
+000300fa:   83 f8 07                                  cmpl $0x7, %eax
+(nemu) si
+000300fd:   76 8c                                     jna $0x8c
+(nemu) si
+0003008b:   8b 45 e8                                  movl -0x18(%ebp), %eax
+(nemu) si
+0003008e:   8b 8c c6 20 00 00 00                      movl 0x20(%esi,%eax,8), %ecx
+(nemu) si
+00030095:   8b 9c c6 24 00 00 00                      movl 0x24(%esi,%eax,8), %ebx
+(nemu) 
+(nemu) si
+0003009c:   8b 45 ec                                  movl -0x14(%ebp), %eax
+(nemu) 
+(nemu) si
+0003009f:   8b 94 c6 24 00 00 00                      movl 0x24(%esi,%eax,8), %edx
+(nemu) 
+(nemu) si
+000300a6:   8b 84 c6 20 00 00 00                      movl 0x20(%esi,%eax,8), %eax
+(nemu) si
+000300ad:   53                                        pushl %ebx
+(nemu) si
+000300ae:   51                                        pushl %ecx
+(nemu) si
+000300af:   52                                        pushl %edx
+(nemu) si
+000300b0:   50                                        pushl %eax
+(nemu) si
+000300b1:   e8 4f ff ff ff                            call $0xffffff4f
+(nemu) si
+00030005:   55                                        pushl %ebp
+(nemu) si
+00030006:   89 e5                                     movl %esp, %ebp
+(nemu) si
+00030008:   53                                        pushl %ebx
+(nemu) si
+00030009:   83 ec 24                                  subl $0x24, %esp
+(nemu) 
+(nemu) si
+0003000c:   e8 14 01 00 00                            call $0x114
+(nemu) si
+00030125:   8b 04 24                                  movl (%esp), %eax
+(nemu) si
+00030128:   c3                                        ret
+(nemu) si
+00030011:   05 ef 2f 00 00                            addl $0x2fef, %eax
+(nemu) si
+00030016:   8b 45 08                                  movl 0x8(%ebp), %eax
+(nemu) si
+00030019:   89 45 e0                                  movl %eax, -0x20(%ebp)
+(nemu) si
+0003001c:   8b 45 0c                                  movl 0xc(%ebp), %eax
+(nemu) si
+0003001f:   89 45 e4                                  movl %eax, -0x1c(%ebp)
+(nemu) si
+00030022:   8b 45 10                                  movl 0x10(%ebp), %eax
+(nemu) si
+00030025:   89 45 d8                                  movl %eax, -0x28(%ebp)
+(nemu) si
+00030028:   8b 45 14                                  movl 0x14(%ebp), %eax
+(nemu) si
+0003002b:   89 45 dc                                  movl %eax, -0x24(%ebp)
+(nemu) si
+0003002e:   8b 4d e0                                  movl -0x20(%ebp), %ecx
+(nemu) si
+00030031:   8b 5d e4                                  movl -0x1c(%ebp), %ebx
+(nemu) si
+00030034:   8b 45 d8                                  movl -0x28(%ebp), %eax
+(nemu) si
+00030037:   8b 55 dc                                  movl -0x24(%ebp), %edx
+(nemu) si
+0003003a:   01 c8                                     addl %ecx, %eax
+(nemu) si
+0003003c:   11 da                                     adcl %ebx, %edx
+(nemu) si
+0003003e:   89 45 f0                                  movl %eax, -0x10(%ebp)
+(nemu) si
+00030041:   89 55 f4                                  movl %edx, -0xc(%ebp)
+(nemu) si
+00030044:   8b 45 f0                                  movl -0x10(%ebp), %eax
+(nemu) si
+00030047:   8b 55 f4                                  movl -0xc(%ebp), %edx
+(nemu) si
+0003004a:   83 c4 24                                  addl $0x24, %esp
+(nemu) si
+0003004d:   5b                                        popl %ebx
+(nemu) si
+0003004e:   5d                                        popl %ebp
+(nemu) si
+0003004f:   c3                                        ret
+(nemu) si
+000000e8:   00 00                                     addb %al, (%eax)
+(nemu) si
+000000ea:   00 00                                     addb %al, (%eax)
+(nemu) si
+000000ec:   00 00                                     addb %al, (%eax)
+(nemu) si
+000000ee:   00 00                                     addb %al, (%eax)
+(nemu) si
+invalid opcode(eip = 0x000000f0): 04 00 00 00 00 00 00 00 ...
+
+There are two cases which will trigger this unexpected exception:
+1. The instruction at eip = 0x000000f0 is not implemented.
+2. Something is implemented incorrectly.
+Find this eip value(0x000000f0) in the disassembling result to distinguish which case it is.
+
+[1;31mIf it is the first case, see
+ _ ____   ___    __    __  __                         _ 
+(_)___ \ / _ \  / /   |  \/  |                       | |
+ _  __) | (_) |/ /_   | \  / | __ _ _ __  _   _  __ _| |
+| ||__ < > _ <| '_ \  | |\/| |/ _` | '_ \| | | |/ _` | |
+| |___) | (_) | (_) | | |  | | (_| | | | | |_| | (_| | |
+|_|____/ \___/ \___/  |_|  |_|\__,_|_| |_|\__,_|\__,_|_|
+
+for more details.
+
+If it is the second case, remember:
+* The machine is always right!
+* Every line of untested code is always wrong![0m
+
+nemu: src/cpu/instr/inv.c:60: inv: Assertion `0' failed.
+make-: *** [Makefile:15: run] Aborted (core dumped)
