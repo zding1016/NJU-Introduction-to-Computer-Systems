@@ -41,6 +41,6 @@ make_instr_func(call_near_indirect){
     if (data_size == 16)
         cpu.eip = rel.val &0xffff;
     else
-        cpu.eip = rel.val;
-    return 0;*/
+        cpu.eip = rel.val;*/
+    return 0;
 }
