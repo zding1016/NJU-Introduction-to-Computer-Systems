@@ -10,6 +10,6 @@ make_instr_func(ret){
     operand_read(&src);
     print_asm_0("ret","",1);
     cpu.esp += data_size / 8;
-    cpu.eip = src.val;
+    cpu.eip = sign_ext(src.val,src.data_size);
     return 0;
 }
