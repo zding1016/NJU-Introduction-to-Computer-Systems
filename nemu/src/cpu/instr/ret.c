@@ -8,10 +8,10 @@ make_instr_func(ret){
     src.data_size = data_size;
     src.addr = cpu.esp;
     operand_read(&src);
+    print_asm_0("ret","",1);
     cpu.esp += data_size / 8;
     cpu.eip = src.val;
     if (data_size == 16)
         cpu.eip &= 0xffff;
-    print_asm_0("ret","",1);
     return 0;
 }
