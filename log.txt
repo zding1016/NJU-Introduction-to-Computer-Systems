@@ -35,3 +35,6 @@ Tue Sep 22 19:06:00 CST 2020
 make-[1]: Entering directory '/home/pa191220177/pa2020_fall/kernel'
 make-[1]: 'kernel' is up to date.
 make-[1]: Leaving directory '/home/pa191220177/pa2020_fall/kernel'
+./nemu/nemu --testcase quick-sort
+NEMU load and execute img: [1m[32m./testcase/bin/quick-sort.img[0m  elf: [1m[36m./testcase/bin/quick-sort[0m
+(nemu) 
