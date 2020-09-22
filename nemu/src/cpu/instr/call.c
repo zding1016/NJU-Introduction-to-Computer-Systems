@@ -26,7 +26,7 @@ make_instr_func(call_near){
 }
 
 make_instr_func(call_near_indirect){
-    int len = 1;
+    /*int len = 1;
     OPERAND rel, mem;
     rel.data_size = data_size;
     len += modrm_rm(eip + 1, &rel);
@@ -42,5 +42,5 @@ make_instr_func(call_near_indirect){
         cpu.eip = rel.val &0xffff;
     else
         cpu.eip = rel.val;
-    return 0;
+    return 0;*/
 }
