@@ -27,3 +27,184 @@ Tue Sep 22 20:19:50 CST 2020
 make-[1]: Entering directory '/home/pa191220177/pa2020_fall/kernel'
 make-[1]: 'kernel' is up to date.
 make-[1]: Leaving directory '/home/pa191220177/pa2020_fall/kernel'
+./nemu/nemu --testcase movsx
+NEMU load and execute img: [1m[32m./testcase/bin/movsx.img[0m  elf: [1m[36m./testcase/bin/movsx[0m
+(nemu) si
+00030000:   e9 00 00 00 00                            jmp $0x0
+(nemu) si
+00030005:   55                                        pushl %ebp
+(nemu) si
+00030006:   89 e5                                     movl %esp, %ebp
+(nemu) si
+00030008:   e8 95 01 00 00                            call $0x195
+(nemu) si
+000301a2:   8b 14 24                                  movl (%esp), %edx
+(nemu) si
+000301a5:   c3                                        ret
+(nemu) si
+0003000d:   81 c2 f3 2f 00 00                         addl $0x2ff3, %edx
+(nemu) si
+00030013:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+00030019:   c7 00 00 00 00 00                         movl $0x0, (%eax)
+(nemu) si
+0003001f:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+00030025:   c7 40 04 01 00 00 00                      movl $0x1, 0x4(%eax)
+(nemu) si
+0003002c:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+00030032:   c7 40 08 02 00 00 00                      movl $0x2, 0x8(%eax)
+(nemu) si
+00030039:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+0003003f:   c7 40 0c 03 00 00 00                      movl $0x3, 0xc(%eax)
+(nemu) si
+00030046:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+0003004c:   c7 40 10 04 00 00 00                      movl $0x4, 0x10(%eax)
+(nemu) si
+00030053:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+00030059:   8b 48 0c                                  movl 0xc(%eax), %ecx
+(nemu) si
+0003005c:   c7 c0 20 30 03 00                         movl $0x33020, %eax
+(nemu) si
+00030062:   89 08                                     movl %ecx, (%eax)
+(nemu) si
+00030064:   c7 c0 20 30 03 00                         movl $0x33020, %eax
+(nemu) si
+0003006a:   8b 08                                     movl (%eax), %ecx
+(nemu) si
+0003006c:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+00030072:   89 48 14                                  movl %ecx, 0x14(%eax)
+(nemu) si
+00030075:   c7 c0 68 30 03 00                         movl $0x33068, %eax
+(nemu) si
+0003007b:   c6 00 61                                  movb $0x61, (%eax)
+(nemu) si
+0003007e:   c7 c0 68 30 03 00                         movl $0x33068, %eax
+(nemu) si
+00030084:   8a 00                                     movb (%eax), %al
+(nemu) si
+00030086:   3c 61                                     cmpb $0x61, %al
+(nemu) si
+00030088:   74 06                                     je $0x6
+(nemu) si
+00030090:   c7 c0 68 30 03 00                         movl $0x33068, %eax
+(nemu) si
+00030096:   8a 08                                     movb (%eax), %cl
+(nemu) si
+00030098:   c7 c0 68 30 03 00                         movl $0x33068, %eax
+(nemu) si
+0003009e:   88 48 01                                  movb %cl, 0x1(%eax)
+(nemu) si
+000300a1:   c7 c0 68 30 03 00                         movl $0x33068, %eax
+(nemu) si
+000300a7:   8a 40 01                                  movb 0x1(%eax), %al
+(nemu) si
+000300aa:   3c 61                                     cmpb $0x61, %al
+(nemu) si
+000300ac:   74 06                                     je $0x6
+(nemu) si
+000300b4:   c7 c0 68 30 03 00                         movl $0x33068, %eax
+(nemu) si
+000300ba:   8a 00                                     movb (%eax), %al
+(nemu) si
+000300bc:   0f be                                     mov %al, %ecx
+(nemu) si
+000300bf:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+000300c5:   89 08                                     movl %ecx, (%eax)
+(nemu) si
+000300c7:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+000300cd:   8b 00                                     movl (%eax), %eax
+(nemu) si
+000300cf:   83 f8 61                                  cmpl $0x61, %eax
+(nemu) si
+000300d2:   74 06                                     je $0x6
+(nemu) si
+000300da:   c7 c0 68 30 03 00                         movl $0x33068, %eax
+(nemu) si
+000300e0:   c6 40 01 80                               movb $0x80, 0x1(%eax)
+(nemu) si
+000300e4:   c7 c0 68 30 03 00                         movl $0x33068, %eax
+(nemu) si
+000300ea:   8a 40 01                                  movb 0x1(%eax), %al
+(nemu) si
+000300ed:   0f be                                     mov %al, %ecx
+(nemu) si
+000300f0:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+000300f6:   89 08                                     movl %ecx, (%eax)
+(nemu) si
+000300f8:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+000300fe:   8b 40 04                                  movl 0x4(%eax), %eax
+(nemu) si
+00030101:   83 f8 01                                  cmpl $0x1, %eax
+(nemu) si
+00030104:   74 06                                     je $0x6
+(nemu) si
+0003010c:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+00030112:   8b 40 08                                  movl 0x8(%eax), %eax
+(nemu) si
+00030115:   83 f8 02                                  cmpl $0x2, %eax
+(nemu) si
+00030118:   74 06                                     je $0x6
+(nemu) si
+00030120:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+00030126:   8b 40 0c                                  movl 0xc(%eax), %eax
+(nemu) si
+00030129:   83 f8 03                                  cmpl $0x3, %eax
+(nemu) si
+0003012c:   74 06                                     je $0x6
+(nemu) si
+00030134:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+0003013a:   8b 40 10                                  movl 0x10(%eax), %eax
+(nemu) si
+0003013d:   83 f8 04                                  cmpl $0x4, %eax
+(nemu) si
+00030140:   74 06                                     je $0x6
+(nemu) si
+00030148:   c7 c0 20 30 03 00                         movl $0x33020, %eax
+(nemu) si
+0003014e:   8b 00                                     movl (%eax), %eax
+(nemu) si
+00030150:   83 f8 03                                  cmpl $0x3, %eax
+(nemu) si
+00030153:   74 06                                     je $0x6
+(nemu) si
+0003015b:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+00030161:   8b 40 14                                  movl 0x14(%eax), %eax
+(nemu) si
+00030164:   83 f8 03                                  cmpl $0x3, %eax
+(nemu) si
+00030167:   74 06                                     je $0x6
+(nemu) si
+0003016f:   c7 c0 68 30 03 00                         movl $0x33068, %eax
+(nemu) si
+00030175:   8a 40 01                                  movb 0x1(%eax), %al
+(nemu) si
+00030178:   3c 80                                     cmpb $0x80, %al
+(nemu) si
+0003017a:   74 06                                     je $0x6
+(nemu) si
+00030182:   c7 c0 40 30 03 00                         movl $0x33040, %eax
+(nemu) si
+00030188:   8b 00                                     movl (%eax), %eax
+(nemu) si
+0003018a:   83 f8 80                                  cmpl $0x80, %eax
+(nemu) si
+0003018d:   74 06                                     je $0x6
+(nemu) si
+0003018f:   b8 01 00 00 00                            movl $0x1, %eax
+(nemu) si
+nemu: HIT [0;31mBAD[0m TRAP at eip = 0x00030194
+NEMU2 terminated
