@@ -7,6 +7,6 @@ make_instr_func(lea){
     int len = 1 + modrm_r_rm(eip + 1, &opr_dest, &opr_src);
     opr_dest.val = opr_src.addr;
     print_asm_2("lea",opr_dest.data_size == 8 ? "b" :(opr_dest.data_size == 16 ? "w" : "l"), len, &opr_src, &opr_dest);
-    operand_write(opr_dest);
+    operand_write(&opr_dest);
     return len;
 }
