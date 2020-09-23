@@ -166,7 +166,9 @@ int64_t alu_imul(int32_t src, int32_t dest, size_t data_size)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
-	return sign_ext(((int64_t)(src) * dest) & (0xffffffffffffffff >>(64-2*data_size)),data_size);
+	src = sign_ext(src & get_mask(data_size), data_size);
+	dest = sign_ext(dest & get_mask(data_size), data_size);
+	return (int64_t)(src) * dest;
 #endif
 }
 
@@ -181,7 +183,12 @@ uint32_t alu_div(uint64_t src, uint64_t dest, size_t data_size)
 	assert(0);
 	return 0;*/
 	assert (src != 0);
-	return (uint32_t)((dest & get_mask(data_size)) / (src & get_mask(data_size))) & get_mask(data_size);
+	dest = dest & (0xffffffffffffffff >> (64 - 2 * data_size));
+	src = src & (0xffffffffffffffff >> (64 - 2 * data_size));
+	uint64_t res = dest / src;
+	assert(((res >> data_size) & 1) == 0);
+	return res & (0xffffffff >> (64 - data_size));
+	
 #endif
 }
 
