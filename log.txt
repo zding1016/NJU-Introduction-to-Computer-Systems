@@ -24,3 +24,102 @@ Fri Sep 25 14:22:22 CST 2020
 make-[1]: Entering directory '/home/pa191220177/pa2020_fall/kernel'
 make-[1]: 'kernel' is up to date.
 make-[1]: Leaving directory '/home/pa191220177/pa2020_fall/kernel'
+./nemu/nemu --testcase add
+NEMU load and execute img: [1m[32m./testcase/bin/add.img[0m  elf: [1m[36m./testcase/bin/add[0m
+(nemu) si
+00030000:   e9 00 00 00 00                            jmp $0x0
+(nemu) si
+00030005:   55                                        pushl %ebp
+(nemu) si
+00030006:   89 e5                                     movl %esp, %ebp
+(nemu) si
+00030008:   53                                        pushl %ebx
+(nemu) si
+00030009:   83 ec 10                                  subl $0x10, %esp
+(nemu) si
+0003000c:   e8 8f 00 00 00                            call $0x8f
+(nemu) si
+000300a0:   8b 14 24                                  movl (%esp), %edx
+(nemu) si
+000300a3:   c3                                        ret
+(nemu) si
+00030011:   81 c2 ef 2f 00 00                         addl $0x2fef, %edx
+(nemu) si
+00030017:   c7 45 f0 00 00 00 00                      movl $0x0, -0x10(%ebp)
+(nemu) si
+0003001e:   c7 45 f8 00 00 00 00                      movl $0x0, -0x8(%ebp)
+(nemu) si
+00030025:   eb 48                                     jmp $0x48
+(nemu) si
+0003006f:   8b 45 f8                                  movl -0x8(%ebp), %eax
+(nemu) si
+00030072:   83 f8 07                                  cmpl $0x7, %eax
+(nemu) si
+00030075:   76 b0                                     jna $0xb0
+(nemu) si
+00030027:   c7 45 f4 00 00 00 00                      movl $0x0, -0xc(%ebp)
+(nemu) si
+0003002e:   eb 34                                     jmp $0x34
+(nemu) si
+00030064:   8b 45 f4                                  movl -0xc(%ebp), %eax
+(nemu) si
+00030067:   83 f8 07                                  cmpl $0x7, %eax
+(nemu) si
+0003006a:   76 c4                                     jna $0xc4
+(nemu) si
+00030030:   8b 45 f8                                  movl -0x8(%ebp), %eax
+(nemu) si
+00030033:   8b 8c 82 20 00 00 00                      movl 0x20(%edx,%eax,4), %ecx
+(nemu) si
+0003003a:   8b 45 f4                                  movl -0xc(%ebp), %eax
+(nemu) si
+0003003d:   8b 84 82 20 00 00 00                      movl 0x20(%edx,%eax,4), %eax
+(nemu) si
+00030044:   8d 1c 01                                  leal (%ecx,%eax,1), %ebx
+(nemu) si
+00030047:   8b 45 f0                                  movl -0x10(%ebp), %eax
+(nemu) si
+0003004a:   8d 48 01                                  leal 0x1(%eax), %ecx
+(nemu) si
+0003004d:   89 4d f0                                  movl %ecx, -0x10(%ebp)
+(nemu) si
+00030050:   8b 84 82 40 00 00 00                      movl 0x40(%edx,%eax,4), %eax
+(nemu) si
+00030057:   39 c3                                     cmpl %eax, %ebx
+(nemu) si
+00030059:   74 06                                     je $0x6
+(nemu) si
+00030061:   ff 45 f4                                  incl -0xc(%ebp)
+(nemu) si
+00030064:   8b 45 f4                                  movl -0xc(%ebp), %eax
+(nemu) si
+00030067:   83 f8 07                                  cmpl $0x7, %eax
+(nemu) si
+0003006a:   76 c4                                     jna $0xc4
+(nemu) si
+00030030:   8b 45 f8                                  movl -0x8(%ebp), %eax
+(nemu) si
+00030033:   8b 8c 82 20 00 00 00                      movl 0x20(%edx,%eax,4), %ecx
+(nemu) si
+0003003a:   8b 45 f4                                  movl -0xc(%ebp), %eax
+(nemu) si
+0003003d:   8b 84 82 20 00 00 00                      movl 0x20(%edx,%eax,4), %eax
+(nemu) si
+00030044:   8d 1c 01                                  leal (%ecx,%eax,1), %ebx
+(nemu) si
+00030047:   8b 45 f0                                  movl -0x10(%ebp), %eax
+(nemu) si
+0003004a:   8d 48 01                                  leal 0x1(%eax), %ecx
+(nemu) si
+0003004d:   89 4d f0                                  movl %ecx, -0x10(%ebp)
+(nemu) si
+00030050:   8b 84 82 40 00 00 00                      movl 0x40(%edx,%eax,4), %eax
+(nemu) si
+00030057:   39 c3                                     cmpl %eax, %ebx
+(nemu) si
+00030059:   74 06                                     je $0x6
+(nemu) si
+00030061:   ff 45 f4                                  incl -0xc(%ebp)
+(nemu) si
+00030064:   8b 45 f4                                  movl -0xc(%ebp), %eax
+(nemu) exit
