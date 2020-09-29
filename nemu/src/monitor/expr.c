@@ -117,6 +117,7 @@ static bool make_token(char *e)
 				 * Add codes to perform some actions with this token.
 				 */
 
+				int k;
 				switch (rules[i].token_type)
 				{
 				case NOTYPE:break;
@@ -124,7 +125,6 @@ static bool make_token(char *e)
 				case NUM:
 				case HEX:
 				case SYMB:
-				    int k;
 				    for (k = 0; k < substr_len; k++) {
 				        tokens[nr_token].str[k] = substr_start[k];
 				    }
