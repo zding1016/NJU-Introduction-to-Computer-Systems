@@ -21,7 +21,9 @@ enum
 	SYMB,
 	HEX,
 	NEG,
-	DEREF
+	DEREF,
+	LS,
+	RS
 
 	/* TODO: Add more token types */
 
@@ -48,6 +50,8 @@ static struct rule
 	{"/",'/'},
 	{"\\(",'('},
 	{"\\)",')'},
+	{"<<",LS},
+	{">>",RS},
 	{"\\+", '+'},
 	{"\\-", '-'},
 };
@@ -60,6 +64,8 @@ static struct Priority{
   {'/', 4},
   {'+', 3},
   {'-', 3},
+  {LS, 2},
+  {RS, 2},
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
@@ -229,6 +235,8 @@ uint32_t eval(int s, int e, bool *success)
             case '-': return val1 - val2; break;
             case '*': return val1 * val2; break;
             case '/': return val1 / val2; break;
+            case LS: return val1 << val2; break;
+            case RS: return val1 >> val2; break;
             default: return 0;
         }
     }

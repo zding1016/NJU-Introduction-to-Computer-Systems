@@ -139,7 +139,6 @@ cmd_handler(cmd_b)
 	{
 		//addr = look_up_fun_symtab(fun_name, &success) + 3;	// +3 to skip the machine code of "push %ebp; movl %esp, %ebp"
 		addr = look_up_fun_symtab(fun_name, &success);
-		printf("!!!!");
 		if (!success)
 		{
 			printf("function '%s' not found\n", fun_name);
