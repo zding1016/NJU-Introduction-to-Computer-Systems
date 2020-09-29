@@ -295,8 +295,8 @@ uint32_t eval(int s, int e, bool *success)
             case '^': return val1 ^ val2; break;
             case AND: return val1 && val2; break;
             case OR: return val1 || val2; break;
-            case '&': return (val1 & val2); break;
-            case '|': return (val1 | val2); break;
+            case '&': return (val1 and val2); break;
+            case '|': return (val1 or val2); break;
             case DEREF: return *(hw_mem+val2);break;
             default: assert(0);
         }
