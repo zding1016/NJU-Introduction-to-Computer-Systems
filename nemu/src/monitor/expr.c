@@ -203,10 +203,6 @@ uint32_t eval(int s, int e, bool *success)
         return eval(s + 1, e - 1, success);
     }
     else {
-        for (int j = 0; j < NR_VALUE; j++){
-            printf("%c, %d", value_pri[j].operand, value_pri[j].num);
-                    
-            }
         int op = 0;
         int min_of_pri = 100;
         for (int i = s; i < e; i++){
