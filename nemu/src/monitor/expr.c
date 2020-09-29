@@ -12,7 +12,6 @@
 #include <regex.h>
 uint32_t eval(int s, int e, bool *success);
 static bool check_parentheses(int s, int e);
-
 enum
 {
 	NOTYPE = 256,
