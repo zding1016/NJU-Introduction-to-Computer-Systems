@@ -12,6 +12,7 @@
 #include <regex.h>
 uint32_t eval(int s, int e, bool *success);
 static bool check_parentheses(int s, int e);
+extern CPU_STATE cpu;
 enum
 {
 	NOTYPE = 256,
