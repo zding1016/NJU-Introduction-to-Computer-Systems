@@ -128,6 +128,7 @@ static bool make_token(char *e)
 				        tokens[nr_token].str[j] = substr_start[j];
 				    }
 				    tokens[nr_token].str[j] = '\0';
+				    break;
 				default:
 					tokens[nr_token].type = rules[i].token_type;
 					nr_token++;
