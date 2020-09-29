@@ -229,7 +229,7 @@ static struct
 	{"w", "Set watchpoint", cmd_w},
 	{"d", "Delete breakpoint(s).", cmd_d},
 	{"exit", "Exit NEMU", cmd_q},
-
+    {"x", "Scan the memory", cmd_x},
 	/* TODO: Add more commands */
 	{"si", "Single Step Execution", cmd_si},
 	{"info", "Print register and watch point info", cmd_info},
