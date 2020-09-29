@@ -41,6 +41,9 @@ static struct rule
 	{" +", NOTYPE}, // white space
 	{"[0-9]{1,10}", NUM},     
 	{"0[xX][0-9a-fA-F]+", HEX},
+	{"\\$e[a-d]x", REG},
+	{"\\$e[sb]p", REG},
+	{"\\$e[ds]i", REG},
 	{"-",'-'},
 	{"\\*",'*'},
 	{"/",'/'},
