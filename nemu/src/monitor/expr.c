@@ -198,7 +198,6 @@ static bool check_parentheses(int s, int e){
 
 uint32_t eval(int s, int e, bool *success)
 {
-    printf("%d !!!%d %d\n",check_parentheses(s,e),s,e);
     if (s > e){
         *success = false;
         return 0;
@@ -233,14 +232,14 @@ uint32_t eval(int s, int e, bool *success)
         int min_of_pri = 100;
         for (int i = s; i <= e; i++){
             if (tokens[i].type == '('){
+                int num = 1;
                 i++;
-                int num = 1, j = i + 1;
-                while (num && j < e) {
-                    if (tokens[j].type == '(')
+                while (num && i <= e) {
+                    if (tokens[i].type == '(')
                         num++;
-                    else if (tokens[j].type == ')')
+                    else if (tokens[i].type == ')')
                         num--;
-                    j = j + 1;
+                    i++;
                 }
             }
             if (IsCertainType(i)){
