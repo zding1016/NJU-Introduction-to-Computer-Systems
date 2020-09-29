@@ -242,6 +242,7 @@ uint32_t eval(int s, int e, bool *success)
             }
         }
         printf("%d, %d, %d\n", s, op, e);
+        if (op == 0) assert(0);
         uint32_t val1, val2;
         val1 = eval(s, op - 1, success);
         val2 = eval(op + 1, e, success);
