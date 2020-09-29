@@ -177,6 +177,26 @@ cmd_handler(cmd_w)
 	return 0;
 }
 
+cmd_handler(cmd_x)
+{
+    if (args == NULL)
+    {
+        puts("Command format: \"x N EXPR\"");
+        return 0;
+    }
+    bool success;
+    uint32_t val = expr(args, &success);
+    val = vaddr_read(val, SERG_CS, 4);
+    if (!success)
+    {
+        printf("invalid expression: '%s'\n", args);
+    }
+    else
+    {
+        printf("%d\n", val);
+    }
+}
+
 //static void cmd_d() {
 cmd_handler(cmd_d)
 {
