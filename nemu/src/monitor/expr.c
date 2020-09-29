@@ -125,8 +125,8 @@ static bool make_token(char *e)
 				case HEX:
 				case SYMB:
 				    int k;
-				    for (k = 0; k < substr_len; j++) {
-				        tokens[nr_token].str[k] = substr_start[j];
+				    for (k = 0; k < substr_len; k++) {
+				        tokens[nr_token].str[k] = substr_start[k];
 				    }
 				    tokens[nr_token].str[k] = '\0';
 				    break;
