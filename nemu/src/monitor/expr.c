@@ -211,7 +211,7 @@ uint32_t eval(int s, int e, bool *success)
                 for (j = 0; j < NR_VALUE; j++){
                     if (value_pri[j].operand == tokens[i].type) break;
                 }
-                if (value_pri[j].num >= max_of_pri){
+                if (value_pri[j].num <= max_of_pri){
                     max_of_pri = value_pri[j].num;
                     op = i;
                 }
