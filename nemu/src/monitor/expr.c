@@ -204,7 +204,7 @@ uint32_t eval(int s, int e, bool *success)
     }
     else {
         for (int j = 0; j < NR_VALUE; j++){
-            printf("%c, %d", value_pri[j].operand, value_pri[j].num)
+            printf("%c, %d", value_pri[j].operand, value_pri[j].num);
                     
             }
         int op = 0;
