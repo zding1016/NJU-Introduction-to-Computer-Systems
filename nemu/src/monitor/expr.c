@@ -165,6 +165,8 @@ static bool check_parentheses(int s, int e){
     }
     if (num == 0 && tokens[s].type == '(' && tokens[e].type == ')')
         return true;
+    else
+        return false;
 }
 
 uint32_t eval(int s, int e, bool *success)
