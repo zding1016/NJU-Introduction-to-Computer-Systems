@@ -182,8 +182,7 @@ cmd_handler(cmd_x)
 {
     if (args == NULL)
     {
-        puts("Command format: \"x N EXPR\"");
-        return 0;
+        goto x_error;
     }
     bool success;
     uint32_t val = expr(args, &success);
@@ -196,6 +195,9 @@ cmd_handler(cmd_x)
     {
         printf("%d\n", val);
     }
+x_error:
+	puts("Command format: \"x N EXPR\"");
+	return 0;
 }
 
 //static void cmd_d() {
