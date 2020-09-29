@@ -204,15 +204,15 @@ uint32_t eval(int s, int e, bool *success)
     }
     else {
         int op = 0;
-        int max_of_pri = 0;
+        int min_of_pri = 100;
         for (int i = s; i < e; i++){
             if (IsCertainType(i)){
                 int j = 0;
                 for (j = 0; j < NR_VALUE; j++){
                     if (value_pri[j].operand == tokens[i].type) break;
                 }
-                if (value_pri[j].num <= max_of_pri){
-                    max_of_pri = value_pri[j].num;
+                if (value_pri[j].num <= min_of_pri){
+                    min_of_pri = value_pri[j].num;
                     op = i;
                 }
             }
@@ -227,7 +227,7 @@ uint32_t eval(int s, int e, bool *success)
             case '-': return val1 - val2; break;
             case '*': return val1 * val2; break;
             case '/': return val1 / val2; break;
-            default: return 0;
+            default: assert(0);
         }
     }
     return 0;
