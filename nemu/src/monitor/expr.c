@@ -18,7 +18,8 @@ enum
 	REG,
 	SYMB,
 	HEX,
-	NEG
+	NEG,
+	DEREF
 
 	/* TODO: Add more token types */
 
