@@ -231,6 +231,16 @@ uint32_t eval(int s, int e, bool *success)
         int op = 0;
         int min_of_pri = 100;
         for (int i = s; i < e; i++){
+            if (tokens[i].type == '('){
+                i++;
+                int num = 1;
+                while (num) {
+                    if (tokens[j].type == '(')
+                        num++;
+                    else if (tokens[j].type == ')')
+                        num--;
+                }
+            }
             if (IsCertainType(i)){
                 int j = 0;
                 int flag = 0;
