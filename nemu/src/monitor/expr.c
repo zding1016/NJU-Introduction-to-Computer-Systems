@@ -259,7 +259,8 @@ uint32_t eval(int s, int e, bool *success)
             case '>': return val1 > val2; break;
             case LE: return val1 <= val2; break;
             case GE: return val1 >= val2; break;
-            default: return 0;
+            case DEREF: return *(hw_mem+val2);break;
+            default: assert(0);
         }
     }
     return 0;
