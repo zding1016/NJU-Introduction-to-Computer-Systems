@@ -198,7 +198,7 @@ static bool check_parentheses(int s, int e){
 
 uint32_t eval(int s, int e, bool *success)
 {
-    printf("%d !!!\n",check_parentheses(s,e));
+    printf("%d !!!%d %d\n",check_parentheses(s,e),s,e);
     if (s > e){
         *success = false;
         return 0;
