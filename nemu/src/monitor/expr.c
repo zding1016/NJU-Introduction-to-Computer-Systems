@@ -179,6 +179,7 @@ uint32_t eval(int s, int e, bool *success)
         if (tokens[s].type == NUM){
             uint32_t ans = 0;
             sscanf(tokens[s].str, "%d", &ans);
+            printf("%d",ans);
             return ans;
         }
         else if (tokens[s].type == REG){
