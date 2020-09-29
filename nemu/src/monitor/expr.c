@@ -233,12 +233,13 @@ uint32_t eval(int s, int e, bool *success)
         for (int i = s; i < e; i++){
             if (tokens[i].type == '('){
                 i++;
-                int num = 1;
-                while (num) {
+                int num = 1, j = i + 1;
+                while (num && j < e) {
                     if (tokens[j].type == '(')
                         num++;
                     else if (tokens[j].type == ')')
                         num--;
+                    j = j + 1;
                 }
             }
             if (IsCertainType(i)){
