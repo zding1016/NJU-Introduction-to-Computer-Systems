@@ -36,7 +36,7 @@ static struct rule
 
 	{" +", NOTYPE}, // white space
 	{"[0-9]{1,10}", NUM},     
-	{"0[xX][0-9a-fA-F]+", HEX}
+	{"0[xX][0-9a-fA-F]+", HEX},
 	{"-",'-'},
 	{"\\*",'*'},
 	{"/",'/'},
@@ -49,7 +49,7 @@ static struct rule
 static struct Priority{
     int operand;
     int num;
-} value[] ={
+} value_pri[] ={
   {'*', 4},
   {'/', 4},
   {'+', 3},
@@ -57,7 +57,7 @@ static struct Priority{
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
-#define NR_VALUE (sizeof(value) / sizeof(value[0]))
+#define NR_VALUE (sizeof(value_pri) / sizeof(value_pri[0]))
 
 static regex_t re[NR_REGEX];
 
@@ -122,7 +122,8 @@ static bool make_token(char *e)
 				case NUM:
 				case HEX:
 				case SYMB:
-				    for (int j = 0; j < substr_len; j++) {
+				    int j = 0;
+				    for (j = 0; j < substr_len; j++) {
 				        tokens[nr_token].str[j] = substr_start[j];
 				    }
 				    tokens[nr_token].str[j] = '\0';
@@ -170,7 +171,7 @@ uint32_t eval(int s, int e, bool *success)
     else if (s == e){
         if (tokens[s].type == NUM){
             uint32_t ans = 0;
-            sscanf(tokens[p].str, "%d", &ans);
+            sscanf(tokens[s].str, "%d", &ans);
             return ans;
         }
         else if (tokens[s].type == REG){
@@ -198,10 +199,10 @@ uint32_t eval(int s, int e, bool *success)
         for (int i = s; i < e; i++){
             if (IsCertainType(i)){
                 for (int j = 0; j < NR_VALUE; j++){
-                    if (value[j].operand == tokens[i].type) break;
+                    if (value_pri[j].operand == tokens[i].type) break;
                 }
-                if (value[j].num >= max_of_pri){
-                    max_of_pri = value[j].num;
+                if (value_pri[j].num >= max_of_pri){
+                    max_of_pri = value_pri[j].num;
                     op = i;
                 }
             }
