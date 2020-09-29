@@ -26,7 +26,9 @@ enum
 	RS,
 	LE,
 	GE,
-	NE
+	NE,
+	AND,
+	OR
 
 	/* TODO: Add more token types */
 
@@ -63,29 +65,41 @@ static struct rule
 	{"\\+", '+'},
 	{"\\-", '-'},
 	{"%",'%'},
+	{"&&", AND},
+	{"\\|\\|", OR},
+	{"\\^",'^'},
+	{"&",'&'},
+	{"|",'|'},
+	{"!",'!'},
+	{"~",'~'},
 };
 
 static struct Priority{
     int operand;
     int num;
 } value_pri[] ={
-  {DEREF, 11},
-  {'~', 11},
+  {DEREF, 13},
+  {'~', 13},
+  {NEG, 13},
+  {'!', 13},
+  {'*', 12},
+  {'/', 12},
+  {'%', 12},
+  {'+', 11},
   {'-', 11},
-  {'*', 10},
-  {'/', 10},
-  {'%', 10},
-  {'+', 9},
-  {'-', 9},
-  {LS, 8},
-  {RS, 8},
-  {GE, 7},
-  {LE, 7},
-  {'>', 7},
-  {'<', 7},
-  {EQ, 6},
-  {NE, 6},
-  
+  {LS, 10},
+  {RS, 10},
+  {GE, 9},
+  {LE, 9},
+  {'>', 9},
+  {'<', 9},
+  {EQ, 8},
+  {NE, 8},
+  {'&',7},
+  {'^',6},
+  {'|',5},
+  {AND,4},
+  {OR,3},
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
@@ -228,7 +242,7 @@ uint32_t eval(int s, int e, bool *success)
         return eval(s + 1, e - 1, success);
     }
     else {
-        int op = 0;
+        int op = -1;
         int min_of_pri = 100;
         for (int i = s; i <= e; i++){
             if (tokens[i].type == '('){
@@ -256,12 +270,12 @@ uint32_t eval(int s, int e, bool *success)
                 }
             }
         }
-        if (op == 0) return 0;
         printf("%d, %d, %d\n", s, op, e);
         uint32_t val1, val2;
-        val1 = eval(s, op - 1, success);
-        val2 = eval(op + 1, e, success);
         int op_type = tokens[op].type;
+        if (op_type != '~' && op_type != '!' && op_type != DEREF && op_type != NEG)
+            val1 = eval(s, op - 1, success);
+        val2 = eval(op + 1, e, success);
         switch(op_type) {
             case '+': return val1 + val2; break;
             case '-': return val1 - val2; break;
@@ -275,6 +289,14 @@ uint32_t eval(int s, int e, bool *success)
             case '>': return val1 > val2; break;
             case LE: return val1 <= val2; break;
             case GE: return val1 >= val2; break;
+            case '!': return !val2; break;
+            case '~': return ~val2; break;
+            case NEG: return -val2; break;
+            case '^': return val1 ^ val2; break;
+            case AND: return val1 && val2; break;
+            case OR: return val1 || val2; break;
+            case '&': return val1 & val2; break;
+            case '|': return val1 | val2; break;
             case DEREF: return *(hw_mem+val2);break;
             default: assert(0);
         }
