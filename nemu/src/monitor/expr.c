@@ -227,7 +227,7 @@ uint32_t eval(int s, int e, bool *success)
             case '-': return val1 - val2; break;
             case '*': return val1 * val2; break;
             case '/': return val1 / val2; break;
-            default: assert(0);
+            default: return 0;
         }
     }
     return 0;
