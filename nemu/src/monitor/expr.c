@@ -227,6 +227,8 @@ uint32_t eval(int s, int e, bool *success)
             default: assert(0);
         }
     }
+    assert(0);
+    return 0;
 }
 
 uint32_t expr(char *e, bool *success)
