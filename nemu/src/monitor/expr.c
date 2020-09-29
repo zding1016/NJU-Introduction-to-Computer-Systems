@@ -227,7 +227,6 @@ uint32_t eval(int s, int e, bool *success)
             default: assert(0);
         }
     }
-    printf("%d,%d",s,e);
     return 0;
 }
 
