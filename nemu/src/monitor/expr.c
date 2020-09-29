@@ -188,7 +188,7 @@ static bool check_parentheses(int s, int e){
     for (int i = s; i < e; i++) {
         if (tokens[i].type == '(') num++;
         else if (tokens[i].type == ')') num--;
-        if (num == 0) return 0;
+        if (num == 0 && i != e-1) return 0;
     }
     if (num == 0 && tokens[s].type == '(' && tokens[e].type == ')')
         return true;
@@ -198,6 +198,7 @@ static bool check_parentheses(int s, int e){
 
 uint32_t eval(int s, int e, bool *success)
 {
+    
     if (s > e){
         *success = false;
         return 0;
