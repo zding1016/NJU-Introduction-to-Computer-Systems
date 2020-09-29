@@ -185,10 +185,10 @@ static bool IsCertainType(int get_int)
 
 static bool check_parentheses(int s, int e){
     int num = 0;
-    for (int i = s; i < e; i++) {
+    for (int i = s; i <= e; i++) {
         if (tokens[i].type == '(') num++;
         else if (tokens[i].type == ')') num--;
-        if (num == 0 && i != e-1) return 0;
+        if (num == 0 && i != e) return 0;
     }
     if (num == 0 && tokens[s].type == '(' && tokens[e].type == ')')
         return true;
@@ -231,7 +231,7 @@ uint32_t eval(int s, int e, bool *success)
     else {
         int op = 0;
         int min_of_pri = 100;
-        for (int i = s; i < e; i++){
+        for (int i = s; i <= e; i++){
             if (tokens[i].type == '('){
                 i++;
                 int num = 1, j = i + 1;
