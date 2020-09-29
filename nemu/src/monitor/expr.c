@@ -124,11 +124,11 @@ static bool make_token(char *e)
 				case NUM:
 				case HEX:
 				case SYMB:
-				    int j = 0;
-				    for (j = 0; j < substr_len; j++) {
-				        tokens[nr_token].str[j] = substr_start[j];
+				    int k;
+				    for (k = 0; k < substr_len; j++) {
+				        tokens[nr_token].str[k] = substr_start[j];
 				    }
-				    tokens[nr_token].str[j] = '\0';
+				    tokens[nr_token].str[k] = '\0';
 				    break;
 				default:
 					tokens[nr_token].type = rules[i].token_type;
