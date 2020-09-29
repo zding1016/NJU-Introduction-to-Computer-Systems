@@ -23,7 +23,11 @@ enum
 	NEG,
 	DEREF,
 	LS,
-	RS
+	RS,
+	LE,
+	GE,
+	NE,
+	EQ
 
 	/* TODO: Add more token types */
 
@@ -45,6 +49,8 @@ static struct rule
 	{"\\$e[a-d]x", REG},
 	{"\\$e[sb]p", REG},
 	{"\\$e[ds]i", REG},
+	{"!=", NE},
+	{"==", EQ},
 	{"-",'-'},
 	{"\\*",'*'},
 	{"/",'/'},
@@ -52,6 +58,10 @@ static struct rule
 	{"\\)",')'},
 	{"<<",LS},
 	{">>",RS},
+	{">=",GE},
+	{"<=",LE},
+	{"<",'<'},
+	{">",'>'},
 	{"\\+", '+'},
 	{"\\-", '-'},
 };
@@ -60,12 +70,19 @@ static struct Priority{
     int operand;
     int num;
 } value_pri[] ={
-  {'*', 4},
-  {'/', 4},
-  {'+', 3},
-  {'-', 3},
-  {LS, 2},
-  {RS, 2},
+  {'*', 10},
+  {'/', 10},
+  {'+', 9},
+  {'-', 9},
+  {LS, 8},
+  {RS, 8},
+  {GE, 7},
+  {LE, 7},
+  {'>', 7},
+  {'<', 7},
+  {EQ, 6},
+  {NE, 6},
+  
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
@@ -237,6 +254,12 @@ uint32_t eval(int s, int e, bool *success)
             case '/': return val1 / val2; break;
             case LS: return val1 << val2; break;
             case RS: return val1 >> val2; break;
+            case NE: return val1 != val2; break;
+            case EQ: return val1 == val2; break;
+            case '<': return val1 < val2; break;
+            case '>': return val1 > val2; break;
+            case LE: return val1 <= val2; break;
+            case GE: return val1 >= val2; break;
             default: return 0;
         }
     }
