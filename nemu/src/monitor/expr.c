@@ -16,7 +16,9 @@ enum
 	EQ,
 	NUM,
 	REG,
-	SYMB
+	SYMB,
+	HEX,
+	NEG
 
 	/* TODO: Add more token types */
 
@@ -33,10 +35,29 @@ static struct rule
 	 */
 
 	{" +", NOTYPE}, // white space
+	{"[0-9]{1,10}", NUM},     
+	{"0[xX][0-9a-fA-F]+", HEX}
+	{"-",'-'},
+	{"\\*",'*'},
+	{"/",'/'},
+	{"\\(",'('},
+	{"\\)",')'},
 	{"\\+", '+'},
+	{"\\-", '-'},
+};
+
+static struct Priority{
+    int operand;
+    int num;
+} value[] ={
+  {'*', 4},
+  {'/', 4},
+  {'+', 3},
+  {'-', 3},
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
+#define NR_VALUE (sizeof(value) / sizeof(value[0]))
 
 static regex_t re[NR_REGEX];
 
@@ -96,6 +117,15 @@ static bool make_token(char *e)
 
 				switch (rules[i].token_type)
 				{
+				case NOTYPE:break;
+				case REG:
+				case NUM:
+				case HEX:
+				case SYMB:
+				    for (int j = 0; j < substr_len; j++) {
+				        tokens[nr_token].str[j] = substr_start[j];
+				    }
+				    tokens[nr_token].str[j] = '\0';
 				default:
 					tokens[nr_token].type = rules[i].token_type;
 					nr_token++;
@@ -115,6 +145,79 @@ static bool make_token(char *e)
 	return true;
 }
 
+static bool IsCertainType(int get_int) 
+{
+    return (get_int != NOTYPE && get_int != NUM && get_int != REG && get_int !=SYMB && get_int != '(' && get_int != ')' && get_int != HEX);
+}
+
+static bool check_parentheses(int s, int e){
+    int num = 0;
+    for (int i = s; i < e; i++) {
+        if (tokens[i].type == '(') num++;
+        else if (tokens[i].type == ')') num--;
+        if (num == 0) return 0;
+    }
+    if (num == 0 && tokens[s].type == '(' && tokens[e].type == ')')
+        return true;
+}
+
+uint32_t eval(int s, int e, bool *success)
+{
+    if (s > e){
+        *success = false;
+        return 0;
+    }
+    else if (s == e){
+        if (tokens[s].type == NUM){
+            uint32_t ans = 0;
+            sscanf(tokens[p].str, "%d", &ans);
+            return ans;
+        }
+        else if (tokens[s].type == REG){
+            if (!strcmp(tokens[s].str, "eax")) return cpu.eax;
+            else if (!strcmp(tokens[s].str, "ecx")) return cpu.ecx;
+            else if (!strcmp(tokens[s].str, "edx")) return cpu.edx;
+            else if (!strcmp(tokens[s].str, "ebx")) return cpu.ebx;
+            else if (!strcmp(tokens[s].str, "esp")) return cpu.esp;
+            else if (!strcmp(tokens[s].str, "ebp")) return cpu.ebp;
+            else if (!strcmp(tokens[s].str, "esi")) return cpu.esi;
+            else if (!strcmp(tokens[s].str, "edi")) return cpu.edi;
+        }
+        else if (tokens[s].type == HEX){
+            uint32_t ans = 0;
+            sscanf(tokens[s].str, "%x", &ans);
+            return ans;
+        }
+    }
+    else if (check_parentheses(s, e)){
+        return eval(s + 1, e - 1, success);
+    }
+    else {
+        int op = 0;
+        int max_of_pri = 0;
+        for (int i = s; i < e; i++){
+            if (IsCertainType(i)){
+                for (int j = 0; j < NR_VALUE; j++){
+                    if (value[j].operand == tokens[i].type) break;
+                }
+                if (value[j].num >= max_of_pri){
+                    max_of_pri = value[j].num;
+                    op = i;
+                }
+            }
+        }
+        val1 = eval(p, op - 1, success);
+        val2 = eval(op + 1, q, success);
+        switch(op_type) {
+            case '+': return val1 + val2; break;
+            case '-': return val1 - val2; break;
+            case '*': return val1 * val2; break;
+            case '/': return val1 / val2; break;
+            default: assert(0);
+        }
+    }
+}
+
 uint32_t expr(char *e, bool *success)
 {
 	if (!make_token(e))
@@ -123,9 +226,17 @@ uint32_t expr(char *e, bool *success)
 		return 0;
 	}
 
-	printf("\nPlease implement expr at expr.c\n");
+	/*printf("\nPlease implement expr at expr.c\n");
 	fflush(stdout);
 	assert(0);
-
-	return 0;
+	return 0;*/
+    for(i = 0; i < nr_token; i ++) {
+        if(tokens[i].type == '*' && (i == 0 || IsCertainType(tokens[i - 1].type))) {
+            tokens[i].type = DEREF;
+        }
+        else if (tokens[i].type == '-' && (i == 0 || IsCertainType(tokens[i - 1].type))) {
+            tokens[i].type = NEG;
+        }
+    }
+    return eval(0, nr_token-1, success);
 }
