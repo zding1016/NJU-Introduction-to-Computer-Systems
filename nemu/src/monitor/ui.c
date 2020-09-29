@@ -186,7 +186,7 @@ cmd_handler(cmd_x)
     }
     bool success;
     uint32_t val = expr(args, &success);
-    val = vaddr_read(val, SERG_CS, 4);
+    val = vaddr_read(val, SREG_CS, 4);
     if (!success)
     {
         printf("invalid expression: '%s'\n", args);
