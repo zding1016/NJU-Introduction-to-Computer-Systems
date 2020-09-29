@@ -26,8 +26,7 @@ enum
 	RS,
 	LE,
 	GE,
-	NE,
-	EQ
+	NE
 
 	/* TODO: Add more token types */
 
