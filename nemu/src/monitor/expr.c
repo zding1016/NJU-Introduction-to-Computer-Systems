@@ -253,5 +253,8 @@ uint32_t expr(char *e, bool *success)
             tokens[i].type = NEG;
         }
     }
+    for (int i=0;i<nr_token;i++){
+        printf("%d, %s\n",i,tokens[i].str);
+    }
     return eval(0, nr_token-1, success);
 }
