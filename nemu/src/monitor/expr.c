@@ -1,6 +1,5 @@
 #include "nemu.h"
 #include "cpu/reg.h"
-#include "cpu/cpu.h"
 #include "memory/memory.h"
 
 #include <stdlib.h>
@@ -12,7 +11,6 @@
 #include <regex.h>
 uint32_t eval(int s, int e, bool *success);
 static bool check_parentheses(int s, int e);
-extern CPU_STATE cpu;
 enum
 {
 	NOTYPE = 256,
@@ -184,14 +182,14 @@ uint32_t eval(int s, int e, bool *success)
             return ans;
         }
         else if (tokens[s].type == REG){
-            if (!strcmp(tokens[s].str, "eax")) return cpu.eax;
-            else if (!strcmp(tokens[s].str, "ecx")) return cpu.ecx;
-            else if (!strcmp(tokens[s].str, "edx")) return cpu.edx;
-            else if (!strcmp(tokens[s].str, "ebx")) return cpu.ebx;
-            else if (!strcmp(tokens[s].str, "esp")) return cpu.esp;
-            else if (!strcmp(tokens[s].str, "ebp")) return cpu.ebp;
-            else if (!strcmp(tokens[s].str, "esi")) return cpu.esi;
-            else if (!strcmp(tokens[s].str, "edi")) return cpu.edi;
+            if (!strcmp(tokens[s].str, "$eax")) return cpu.eax;
+            else if (!strcmp(tokens[s].str, "$ecx")) return cpu.ecx;
+            else if (!strcmp(tokens[s].str, "$edx")) return cpu.edx;
+            else if (!strcmp(tokens[s].str, "$ebx")) return cpu.ebx;
+            else if (!strcmp(tokens[s].str, "$esp")) return cpu.esp;
+            else if (!strcmp(tokens[s].str, "$ebp")) return cpu.ebp;
+            else if (!strcmp(tokens[s].str, "$esi")) return cpu.esi;
+            else if (!strcmp(tokens[s].str, "$edi")) return cpu.edi;
         }
         else if (tokens[s].type == HEX){
             uint32_t ans = 0;
