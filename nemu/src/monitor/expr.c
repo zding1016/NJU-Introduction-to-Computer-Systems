@@ -210,8 +210,8 @@ uint32_t eval(int s, int e, bool *success)
             }
         }
         uint32_t val1, val2;
-        val1 = eval(p, op - 1, success);
-        val2 = eval(op + 1, q, success);
+        val1 = eval(s, op - 1, success);
+        val2 = eval(op + 1, e, success);
         switch(op_type) {
             case '+': return val1 + val2; break;
             case '-': return val1 - val2; break;
