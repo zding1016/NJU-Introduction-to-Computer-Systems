@@ -235,7 +235,7 @@ uint32_t expr(char *e, bool *success)
 	fflush(stdout);
 	assert(0);
 	return 0;*/
-    for(i = 0; i < nr_token; i ++) {
+    for(int i = 0; i < nr_token; i ++) {
         if(tokens[i].type == '*' && (i == 0 || IsCertainType(tokens[i - 1].type))) {
             tokens[i].type = DEREF;
         }
