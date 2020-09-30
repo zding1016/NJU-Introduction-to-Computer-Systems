@@ -239,8 +239,10 @@ uint32_t eval(int s, int e, bool *success)
             sscanf(tokens[s].str, "%x", &ans);
             return ans;
         }
-        else 
+        else {
+            printf("\n%d!!!!\n",look_up_symtab(tokens[s].str, success));
             return look_up_symtab(tokens[s].str, success);
+        }
     }
     else if (check_parentheses(s, e)){
         return eval(s + 1, e - 1, success);
