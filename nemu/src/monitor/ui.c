@@ -202,20 +202,20 @@ cmd_handler(cmd_x)
     else
     {
         int list = 0;
-        printf("0x%x:\t0x",addr);
+        printf("0x%08x:\t0x",addr);
         for (int i = 1; i <= 4 * num; i++) {
             if (i % 4 != 0){
-                printf("%x", paddr_read(addr + i - 1, 1));
+                printf("%02x", pmem[addr + i - 1]);
             }
             else {
-                printf("%x", paddr_read(addr + i - 1, 1));
+                printf("%02x", pmem[addr + i - 1]);
                 printf("\t");
                 list = (list + 1) % 4;
                 if (i == 4 * num) {
                     printf("\n");
                     break;
                 }
-                if (list == 0) printf("\n0x%x:\t", addr + i);
+                if (list == 0) printf("\n0x%08x:\t", addr + i);
                 printf("0x");
             }
         }
