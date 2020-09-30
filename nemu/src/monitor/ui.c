@@ -203,8 +203,8 @@ cmd_handler(cmd_x)
     {
         int list = 0;
         printf("0x%08x:\t0x",addr);
-        for (int i = 1; i <= num; i++) {
-            printf("0x%08x", paddr_read(addr + i - 1, 4));
+        for (int i = 0; i < 4 * num; i += 4) {
+            printf("0x%08x", paddr_read(addr + i, 4));
             printf("\t");
             list = (list + 1) % 4;
             if (i == num) {
