@@ -215,7 +215,7 @@ cmd_handler(cmd_x)
                     printf("\n");
                     break;
                 }
-                if (list == 0) printf("0x%x:\t", addr + i);
+                if (list == 0) printf("\n0x%x:\t", addr + i);
                 printf("0x");
             }
         }
