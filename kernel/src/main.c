@@ -95,6 +95,7 @@ void init_cond()
 
 	/* Clear the test data we just written in the video memory. */
 	video_mapping_clear();
+	BREAK POINT;
 #endif
 
 #ifdef IA32_PAGE
