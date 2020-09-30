@@ -304,7 +304,7 @@ uint32_t eval(int s, int e, bool *success)
             case OR: return val1 || val2; break;
             case '&': return val1 & val2; break;
             case '|': return (val1 | val2); break;
-            case DEREF: return *(hw_mem + val2);break;
+            case DEREF: return paddr_read(val2, 1);break;
             default: assert(0);
         }
     }
