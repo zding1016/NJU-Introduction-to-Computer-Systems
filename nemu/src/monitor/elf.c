@@ -100,7 +100,7 @@ uint32_t look_up_symtab(char *sym, bool *success)
 	int i;
 	for (i = 0; i < nr_symtab_entry; i++)
 	{
-	    printf("%s\n",strtab + symtab[i].st_name);
+	    //printf("%s\n",strtab + symtab[i].st_name);
 		uint8_t type = ELF32_ST_TYPE(symtab[i].st_info);
 		if ((type == STT_FUNC || type == STT_OBJECT) &&
 			strcmp(strtab + symtab[i].st_name, sym) == 0)
