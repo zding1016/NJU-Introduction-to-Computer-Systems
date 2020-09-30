@@ -207,9 +207,12 @@ cmd_handler(cmd_x)
             printf("0x%08x", paddr_read(addr + i, 4));
             printf("\t");
             list = (list + 1) % 4;
+            if (i == 4 * (num - 1)){
+                printf("\n");
+                break;
+            }
             if (list == 0) printf("\n0x%08x:\t", addr + i);
         }
-        printf("\n");
     }
     return 0;
     
