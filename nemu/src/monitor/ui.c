@@ -205,10 +205,10 @@ cmd_handler(cmd_x)
         printf("0x%08x:\t0x",addr);
         for (int i = 1; i <= 4 * num; i++) {
             if (i % 4 != 0){
-                printf("%02x", pmem[addr + i - 1]);
+                printf("%02x", hw_man[addr + i - 1]);
             }
             else {
-                printf("%02x", pmem[addr + i - 1]);
+                printf("%02x", hw_man[addr + i - 1]);
                 printf("\t");
                 list = (list + 1) % 4;
                 if (i == 4 * num) {
