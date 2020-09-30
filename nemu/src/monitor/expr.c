@@ -241,6 +241,7 @@ uint32_t eval(int s, int e, bool *success)
         }
         else {
             printf("\n%d!!!!\n",look_up_symtab(tokens[s].str, success));
+            printf("%d\n, success");
             return look_up_symtab(tokens[s].str, success);
         }
     }
