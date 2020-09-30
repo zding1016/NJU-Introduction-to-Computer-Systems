@@ -194,7 +194,7 @@ cmd_handler(cmd_x)
     bool success;
     uint32_t num = expr(num_str, &success);
     paddr_t addr = expr(addr_str, &success);
-    printf("n = %d, expr = %x", num, addr);
+    printf("n = %d, expr = 0x%x", num, addr);
     //uint32_t val = expr(args, &success);
     //val = vaddr_read(val, SREG_CS, 4);
     if (!success)
@@ -205,6 +205,8 @@ cmd_handler(cmd_x)
     {
         //printf("%d\n", val);
     }
+    return 0;
+    
 x_error:
 	puts("Command format: \"x N EXPR\"");
 	return 0;
