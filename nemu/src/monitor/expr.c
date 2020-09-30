@@ -240,8 +240,6 @@ uint32_t eval(int s, int e, bool *success)
             return ans;
         }
         else {
-            printf("\n%d!!!!\n",look_up_symtab(tokens[s].str, success));
-            printf("%d\n", *success);
             return look_up_symtab(tokens[s].str, success);
         }
     }
@@ -330,9 +328,6 @@ uint32_t expr(char *e, bool *success)
         else if (tokens[i].type == '-' && (i == 0 || IsCertainType(tokens[i - 1].type))) {
             tokens[i].type = NEG;
         }
-    }
-    for (int i=0;i<nr_token;i++){
-        printf("%d,%c,%d, %s\n",i,tokens[i].type, tokens[i].type,tokens[i].str);
     }
     return eval(0, nr_token-1, success);
 }
