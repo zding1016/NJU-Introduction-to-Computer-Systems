@@ -51,6 +51,7 @@ static struct rule
 	{"\\$e[a-d]x", REG},
 	{"\\$e[sb]p", REG},
 	{"\\$e[ds]i", REG},
+	{"[a-zA-z]+[a-zA-z0-9_]*", SYMB},
 	{"!=", NE},
 	{"==", EQ},
 	{"\\*",'*'},
