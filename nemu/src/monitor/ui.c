@@ -195,15 +195,26 @@ cmd_handler(cmd_x)
     uint32_t num = expr(num_str, &success);
     paddr_t addr = expr(addr_str, &success);
     printf("n = %d, expr = 0x%x\n", num, addr);
-    //uint32_t val = expr(args, &success);
-    //val = vaddr_read(val, SREG_CS, 4);
     if (!success)
     {
         printf("invalid expression: '%s'\n", args);
     }
     else
     {
-        //printf("%d\n", val);
+        for (int i = 1; i <= 4 * num; i++) {
+            if (i % 4 == 0){
+                printf("%-4x ", paddr_read(addr + i - 1, 1));
+            }
+            else {
+                printf("%-4x ", paddr_read(addr + i - 1, 1));
+                printf("\t");
+                for (int j = i - 3; j <= i; j++)
+                    printf("%-4d ", paddr_read(addr + j - 1, 1));
+                printf("\n");
+                if (i == 4 * num) printf("\n");
+                else printf("0x%x:\t", addr + i);
+            }
+        }
     }
     return 0;
     
