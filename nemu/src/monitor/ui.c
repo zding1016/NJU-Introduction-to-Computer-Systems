@@ -201,23 +201,25 @@ cmd_handler(cmd_x)
     }
     else
     {
-        printf("0x%x:\t",addr);
+        int list = 0;
+        printf("0x%x:\t0x",addr);
         for (int i = 1; i <= 4 * num; i++) {
             if (i % 4 != 0){
-                printf("%-4x ", paddr_read(addr + i - 1, 1));
+                printf("%x", paddr_read(addr + i - 1, 1));
             }
             else {
-                printf("%-4x ", paddr_read(addr + i - 1, 1));
+                printf("%x", paddr_read(addr + i - 1, 1));
                 printf("\t");
-                for (int j = i - 3; j <= i; j++)
-                    printf("%-4d ", paddr_read(addr + j - 1, 1));
-                printf("\n");
-                if (i == 4 * num) printf("\n");
-                else printf("0x%x:\t", addr + i);
+                list = (list + 1) % 4;
+                if (i == 4 * num) {
+                    printf("\n");
+                    break;
+                }
+                if (list == 0) printf("0x%x:\t", addr + i);
+                printf("0x");
             }
         }
     }
-    printf("\n");
     return 0;
     
 x_error:
