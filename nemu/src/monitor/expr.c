@@ -276,6 +276,7 @@ uint32_t eval(int s, int e, bool *success)
         if (op_type != '~' && op_type != '!' && op_type != DEREF && op_type != NEG)
             val1 = eval(s, op - 1, success);
         val2 = eval(op + 1, e, success);
+        uint32_t ans;
         switch(op_type) {
             case '+': return val1 + val2; break;
             case '-': return val1 - val2; break;
@@ -296,8 +297,8 @@ uint32_t eval(int s, int e, bool *success)
             case AND: return val1 && val2; break;
             case OR: return val1 || val2; break;
             case '&':
-                uint32_t ans_and = val1 & val2;
-                return ans_and; 
+                ans = val1 & val2;
+                return ans; 
                 break;
             case '|': return (val1 | val2); break;
             case DEREF: return *(hw_mem + val2);break;
