@@ -275,7 +275,6 @@ uint32_t eval(int s, int e, bool *success)
                 }
             }
         }
-        printf("%d, %d, %d\n", s, op, e);
         uint32_t val1 = 0, val2 = 0;
         int op_type = tokens[op].type;
         if (op_type != '~' && op_type != '!' && op_type != DEREF && op_type != NEG)
