@@ -10,6 +10,7 @@
  */
 #include <sys/types.h>
 #include <regex.h>
+uint32_t look_up_symtab(char *sym, bool *success);
 uint32_t eval(int s, int e, bool *success);
 static bool check_parentheses(int s, int e);
 enum
@@ -238,7 +239,7 @@ uint32_t eval(int s, int e, bool *success)
             return ans;
         }
         else 
-            return look_up_fun_symtab(tokens[s].str, success);
+            return look_up_symtab(tokens[s].str, success);
     }
     else if (check_parentheses(s, e)){
         return eval(s + 1, e - 1, success);
