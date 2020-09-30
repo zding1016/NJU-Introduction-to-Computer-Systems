@@ -87,6 +87,7 @@ void init_cond()
 #endif
 	/* Load the program. */
 	uint32_t eip = loader();
+	BREAK_POINT;
 #ifdef HAS_DEVICE_VGA
 	/* Read data in the video memory to check whether 
 	 * the test data is written sucessfully.
@@ -95,7 +96,7 @@ void init_cond()
 
 	/* Clear the test data we just written in the video memory. */
 	video_mapping_clear();
-	BREAK_POINT;
+	
 #endif
 
 #ifdef IA32_PAGE
