@@ -196,7 +196,7 @@ static bool make_token(char *e)
 
 static bool IsCertainType(int get_int) 
 {
-    return (get_int != NOTYPE && get_int != NUM && get_int != REG && get_int !=SYMB && get_int != '(' && get_int != ')' && get_int != HEX);
+    return (get_int != NOTYPE && get_int != NUM && get_int != REG && get_int !=SYMB && get_int != ')' && get_int != HEX);
 }
 
 static bool check_parentheses(int s, int e){
