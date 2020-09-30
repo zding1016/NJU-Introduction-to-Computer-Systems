@@ -276,7 +276,6 @@ uint32_t eval(int s, int e, bool *success)
         if (op_type != '~' && op_type != '!' && op_type != DEREF && op_type != NEG)
             val1 = eval(s, op - 1, success);
         val2 = eval(op + 1, e, success);
-        uint32_t ans;
         switch(op_type) {
             case '+': return val1 + val2; break;
             case '-': return val1 - val2; break;
