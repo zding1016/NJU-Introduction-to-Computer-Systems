@@ -193,7 +193,7 @@ cmd_handler(cmd_x)
     }
     bool success;
     uint32_t num = expr(num_str, &success);
-    paddr_t addr = exprexpr(addr_str, &success);
+    paddr_t addr = expr(addr_str, &success);
     printf("n = %d, expr = %x", num, addr);
     //uint32_t val = expr(args, &success);
     //val = vaddr_read(val, SREG_CS, 4);
