@@ -203,21 +203,15 @@ cmd_handler(cmd_x)
     {
         int list = 0;
         printf("0x%08x:\t0x",addr);
-        for (int i = 1; i <= 4 * num; i++) {
-            if (i % 4 != 0){
-                printf("%02x", paddr_read(addr + i - 1, 1));
+        for (int i = 1; i <= num; i++) {
+            printf("%0x08x", paddr_read(addr + i - 1, 4));
+            printf("\t");
+            list = (list + 1) % 4;
+            if (i == 4 * num) {
+                printf("\n");
+                break;
             }
-            else {
-                printf("%02x", paddr_read(addr + i - 1, 1));
-                printf("\t");
-                list = (list + 1) % 4;
-                if (i == 4 * num) {
-                    printf("\n");
-                    break;
-                }
-                if (list == 0) printf("\n0x%08x:\t", addr + i);
-                printf("0x");
-            }
+            if (list == 0) printf("\n0x%08x:\t", addr + i);
         }
     }
     return 0;
