@@ -184,9 +184,19 @@ cmd_handler(cmd_x)
     {
         goto x_error;
     }
+    
+    char *num_str = strtok(NULL, " ");
+    char *addr_str = strtok(NULL, " ");
+    if (num_str == NULL || addr_str == NULL)
+    {
+        goto x_error;
+    }
     bool success;
-    uint32_t val = expr(args, &success);
-    val = vaddr_read(val, SREG_CS, 4);
+    uint32_t num = eval(num_str, &success);
+    paddr_t addr = eval(addr_str, &success);
+    printf("n = %d, expr = %x", num, addr);
+    //uint32_t val = expr(args, &success);
+    //val = vaddr_read(val, SREG_CS, 4);
     if (!success)
     {
         printf("invalid expression: '%s'\n", args);
@@ -252,7 +262,7 @@ static struct
 	{"w", "Set watchpoint", cmd_w},
 	{"d", "Delete breakpoint(s).", cmd_d},
 	{"exit", "Exit NEMU", cmd_q},
-    {"x", "Scan the memory", cmd_x},
+    {"x", "Know value in a certain address", cmd_x},
 	/* TODO: Add more commands */
 	{"si", "Single Step Execution", cmd_si},
 	{"info", "Print register and watch point info", cmd_info},
