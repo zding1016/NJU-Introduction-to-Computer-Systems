@@ -203,7 +203,7 @@ cmd_handler(cmd_x)
     }
     else
     {
-        printf("%d\n", val);
+        //printf("%d\n", val);
     }
 x_error:
 	puts("Command format: \"x N EXPR\"");
