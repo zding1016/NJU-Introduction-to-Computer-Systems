@@ -203,7 +203,7 @@ cmd_handler(cmd_x)
     {
         printf("0x%x:\t",addr);
         for (int i = 1; i <= 4 * num; i++) {
-            if (i % 4 == 0){
+            if (i % 4 != 0){
                 printf("%-4x ", paddr_read(addr + i - 1, 1));
             }
             else {
