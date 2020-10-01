@@ -1,5 +1,6 @@
 #include "memory/mmu/cache.h"
-
+#include "memory/memory.h"
+#include <stdlib.h>
 struct Cache_Line{
     uint8_t valid_byte:1; //有效位 1位
     uint32_t sign_byte:19; //标记位 32 - 6 - 7 = 19位 
