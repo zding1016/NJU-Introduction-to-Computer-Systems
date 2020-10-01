@@ -4,7 +4,7 @@ struct Cache_Line{
     uint8_t valid_byte:1;
     uint32_t sign_byte:19;
     uint8_t block[64];
-}
+};
 
 struct Cache_Line Cache[1024];
 // init the cache
