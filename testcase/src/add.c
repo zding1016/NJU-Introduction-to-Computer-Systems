@@ -11,7 +11,7 @@ int main()
 	{
 		for (j = 0; j < NR_DATA; j++)
 		{
-			// BREAK_POINT;
+			BREAK_POINT;
 			nemu_assert((test_data[i] + test_data[j]) == ans[ans_idx++]);
 		}
 	}
