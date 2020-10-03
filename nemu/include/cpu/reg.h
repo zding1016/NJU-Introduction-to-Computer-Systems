@@ -60,7 +60,7 @@ typedef struct
         uint32_t base : 32;
     }GDTR;
     
-    typedef union {
+    union {
         struct {
             uint32_t pe : 1;
             uint32_t mp : 1;
@@ -72,7 +72,7 @@ typedef struct
         };
         uint32_t val;
     }CR0;
-    typedef struct {
+    struct {
         // the 16-bit visible part, i.e. , the selector
         union {
             uint16_t val;
