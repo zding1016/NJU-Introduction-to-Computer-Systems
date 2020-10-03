@@ -55,12 +55,12 @@ typedef struct
 	} eflags;
 
 #ifdef IA32_SEG
-    struct{
+    typedef struct {
         uint32_t limit : 16;
         uint32_t base : 32;
     }GDTR;
     
-    union {
+    typedef union {
         struct {
             uint32_t pe : 1;
             uint32_t mp : 1;
@@ -72,7 +72,7 @@ typedef struct
         };
         uint32_t val;
     }CR0;
-    struct {
+    typedef struct {
         // the 16-bit visible part, i.e. , the selector
         union {
             uint16_t val;
