@@ -60,7 +60,7 @@ typedef struct
         uint32_t base : 32;
     };
     
-    typedef union {
+    union CR0{
         struct {
             uint32_t pe : 1;
             uint32_t mp : 1;
@@ -71,7 +71,7 @@ typedef struct
             uint32_t pg : 1;
         };
         uint32_t val;
-    }CR0;
+    };
     struct SegReg{
         // the 16-bit visible part, i.e. , the selector
         union {
