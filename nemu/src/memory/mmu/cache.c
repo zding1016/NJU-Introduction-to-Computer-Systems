@@ -34,7 +34,7 @@ void cache_write(paddr_t paddr, size_t len, uint32_t data)
 	        if (Cache[index_line].sign_byte == sign_byte) {
 	            whether_hit = true;
 	            for (int j = 0; j< len; j++){
-	                if (index_in_group +j > 64) {
+	                if (index_in_group +j >= 64) {
 	                    cache_write(paddr + j, len-j, data);
 	                    return;
 	                }
@@ -48,13 +48,18 @@ void cache_write(paddr_t paddr, size_t len, uint32_t data)
 	    }
 	}
 	if (!whether_hit){
-	    if (index_empty_in_group == -1){
-	        index_empty_in_group = index_for_group + (rand() % 8);
-	    }
 	    uint32_t start_addr = paddr & 0xffffffc0;
-	    memcpy(Cache[index_empty_in_group].block, hw_mem +start_addr , 64);
-	    Cache[index_empty_in_group].valid_byte =1;
-	    Cache[index_empty_in_group].sign_byte =sign_byte;
+	    if (index_empty_in_group == -1){
+	        uint32_t random_line = index_for_group + (rand() % 8);
+	        memcpy(Cache[random_line].block, hw_mem +start_addr , 64);
+	        Cache[random_line].valid_byte =1;
+	        Cache[random_line].sign_byte =sign_byte;
+	    }
+	    else{
+	        memcpy(Cache[index_empty_in_group].block, hw_mem +start_addr , 64);
+	        Cache[index_empty_in_group].valid_byte =1;
+	        Cache[index_empty_in_group].sign_byte =sign_byte;
+	    }
 	}
 }
 
@@ -100,7 +105,7 @@ uint32_t cache_read(paddr_t paddr, size_t len)
 	        Cache[index_empty_in_group].sign_byte = sign_byte;
 	    }
 	    else{
-	        int random_line = (rand() % 8) + index_for_group * 8;
+	        uint32_t random_line = (rand() % 8) + index_for_group * 8;
 	        memcpy(Cache[random_line].block, hw_mem + start_addr, 64);
 	        Cache[random_line].valid_byte = 1;
 	        Cache[random_line].sign_byte = sign_byte;
