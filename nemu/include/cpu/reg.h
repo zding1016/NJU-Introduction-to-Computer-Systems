@@ -56,12 +56,12 @@ typedef struct
 
 #ifdef IA32_SEG
 
-    typedef struct GDTR{
+    struct GDTR{
         uint32_t limit : 16;
         uint32_t base : 32;
-    }GDTR;
+    };
     
-    typedef union CR0{
+    union CR0{
         struct {
             uint32_t pe : 1;
             uint32_t mp : 1;
@@ -72,9 +72,9 @@ typedef struct
             uint32_t pg : 1;
         };
         uint32_t val;
-    }CR0;
+    };
     
-    typedef struct SegReg{
+    struct SegReg{
         // the 16-bit visible part, i.e. , the selector
         union {
             uint16_t val;
@@ -93,15 +93,15 @@ typedef struct
             uint32_t privilege_level : 2;
             uint32_t soft_use : 1;
         };
-    }SegReg;
+    };
     
-	GDTR gdtr; // GDTR, todo: define type GDTR
+	struct GDTR gdtr; // GDTR, todo: define type GDTR
 	// segment registers, todo: define type SegReg
 	union {
-		SegReg segReg[6];
+		struct SegReg segReg[6];
 		struct
 		{
-			SegReg es, cs, ss, ds, fs, gs;
+			struct SegReg es, cs, ss, ds, fs, gs;
 		};
 	};
 	// control registers, todo: define type CR0
