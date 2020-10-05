@@ -92,7 +92,7 @@ typedef struct
             uint32_t soft_use : 1;
         };
     };
-	struct GDTR gdtr; // GDTR, todo: define type GDTR
+	GDTR gdtr; // GDTR, todo: define type GDTR
 	// segment registers, todo: define type SegReg
 	union {
 		struct SegReg segReg[6];
