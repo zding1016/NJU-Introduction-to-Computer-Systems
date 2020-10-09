@@ -327,6 +327,7 @@ uint32_t expr(char *e, bool *success)
         else if (tokens[i].type == '-' && (i == 0 || IsCertainType(tokens[i - 1].type))) {
             tokens[i].type = NEG;
         }
+        printf("%s,%d",tokens[i].str,tokens[i].type);
     }
     return eval(0, nr_token-1, success);
 }
