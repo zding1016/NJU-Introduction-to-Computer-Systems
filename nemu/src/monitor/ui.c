@@ -128,7 +128,7 @@ cmd_handler(cmd_b)
 	if (*args == '*')
 	{
 		args++;
-		printf("%s\n",args);
+		//printf("%s\n",args);
 		addr = expr(args, &success);
 		if (!success)
 		{
