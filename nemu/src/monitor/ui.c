@@ -132,7 +132,7 @@ cmd_handler(cmd_b)
 		addr = expr(args, &success);
 		if (!success)
 		{
-			printf("invalid expression: '%s'\n", args);
+			printf("invalid expressionhahah: '%s'\n", args);
 			return 0;
 		}
 	}
