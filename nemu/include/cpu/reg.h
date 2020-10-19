@@ -96,10 +96,10 @@ typedef struct
 	GDTR gdtr; // GDTR, todo: define type GDTR
 	// segment registers, todo: define type SegReg
 	union {
-		struct SegReg segReg[6];
+		SegReg segReg[6];
 		struct
 		{
-			struct SegReg es, cs, ss, ds, fs, gs;
+			SegReg es, cs, ss, ds, fs, gs;
 		};
 	};
 	// control registers, todo: define type CR0
