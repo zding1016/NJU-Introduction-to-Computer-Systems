@@ -55,7 +55,7 @@ typedef struct
 	} eflags;
 
 #ifdef IA32_SEG
-    typedef struct {
+    /*typedef struct {
         uint32_t limit : 16;
         uint32_t base : 32;
     }GDTR;
@@ -103,7 +103,7 @@ typedef struct
 		};
 	};
 	// control registers, todo: define type CR0
-	CR0 cr0;
+	CR0 cr0;*/
 #else
 	uint8_t dummy_seg[142]; // make __ref_ instructions safe to use
 #endif
