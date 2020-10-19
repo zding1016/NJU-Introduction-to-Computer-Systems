@@ -58,7 +58,7 @@ typedef struct
     typedef struct {
         uint32_t limit : 16;
         uint32_t base : 32;
-    } GDTR;
+    }GDTR;
     
     typedef union {
         struct {
@@ -71,7 +71,7 @@ typedef struct
             uint32_t pg : 1;
         };
         uint32_t val;
-    } CR0;
+    }CR0;
     typedef struct{
         // the 16-bit visible part, i.e. , the selector
         union {
@@ -91,7 +91,7 @@ typedef struct
             uint32_t privilege_level : 2;
             uint32_t soft_use : 1;
         };
-    } SegReg;
+    }SegReg;
     
 	GDTR gdtr; // GDTR, todo: define type GDTR
 	// segment registers, todo: define type SegReg
