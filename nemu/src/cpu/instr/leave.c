@@ -11,5 +11,6 @@ make_instr_func(leave){
     operand_read(&mem);
     cpu.ebp = mem.val;
     cpu.esp += data_size / 8;
+    print_asm_0("leave", "", 1);
     return 1;
 }
