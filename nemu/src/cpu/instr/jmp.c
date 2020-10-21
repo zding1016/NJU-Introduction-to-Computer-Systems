@@ -65,5 +65,6 @@ make_instr_func(jmp_far_imm){
     else
         cpu.esp = rel.val;
     cpu.cs.val = instr_fetch(eip + 5, 2);
+    load_sreg(1);
     return 7;
 }
