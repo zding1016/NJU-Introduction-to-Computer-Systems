@@ -7,7 +7,7 @@ uint32_t segment_translate(uint32_t offset, uint8_t sreg)
 	/* TODO: perform segment translation from virtual address to linear address
 	 * by reading the invisible part of the segment register 'sreg'
 	 */
-	return offset + cpu.SegReg[sreg].base;
+	return offset + cpu.segReg[sreg].base;
 }
 
 // load the invisible part of a segment register
@@ -16,16 +16,16 @@ void load_sreg(uint8_t sreg)
 	/* TODO: load the invisibile part of the segment register 'sreg' by reading the GDT.
 	 * The visible part of 'sreg' should be assigned by mov or ljmp already.
 	 */
-	uint32_t index = cpu.SegReg[sreg].index;
+	uint32_t index = cpu.segReg[sreg].index;
 	uint32_t base = cpu.gdtr.base;
 	
 	SegDesc segDesc;
 	segDesc.val[0] = paddr_read(base + index * 8, 4);
 	segDesc.val[1] = paddr_read(base + index * 8 + 4, 4);
 	
-	cpu.SegReg[sreg].base = segDesc.base_31_24 << 24 | segDesc.base_23_16 << 16 | segDesc.base_15_0;
-	cpu.SegReg[sreg].limit = segDesc.limit_19_16 << 16 | segDesc.limit_15_0;
-	cpu.SegReg[sreg].type = segDesc.type;
-	cpu.SegReg[sreg].privilege_level = segDesc.privilege_level;
-	cpu.SegReg[sreg].soft_use = segDesc.soft_use.
+	cpu.segReg[sreg].base = segDesc.base_31_24 << 24 | segDesc.base_23_16 << 16 | segDesc.base_15_0;
+	cpu.segReg[sreg].limit = segDesc.limit_19_16 << 16 | segDesc.limit_15_0;
+	cpu.segReg[sreg].type = segDesc.type;
+	cpu.segReg[sreg].privilege_level = segDesc.privilege_level;
+	cpu.segReg[sreg].soft_use = segDesc.soft_use.
 }
