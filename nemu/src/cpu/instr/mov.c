@@ -78,5 +78,13 @@ make_instr_func(mov_srm162r_l) {
 }
 
 make_instr_func(mov_rm2s_w) {
-    
+    int len = 1;
+    decode_data_size_w
+    decode_operand_rm2r
+    operand_read(&opr_src);
+    opr_dest.val = opr_src.val;
+    opr_dest.type = OPR_SREG;
+    operand_write(&opr_dest);
+    print_asm_2("mov", "w", len, &opr_src, &opr_dest);
+    return len;
 }
