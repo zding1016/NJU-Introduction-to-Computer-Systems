@@ -25,6 +25,7 @@ make_instr_func(jmp_near_indirect){
     OPERAND rel;
     rel.data_size = data_size;
     len += modrm_rm(eip + 1, &rel);
+    rel.sreg = SREG_CS;
     operand_read(&rel);
     print_asm_1("jmp","",len,&rel);
     if (data_size == 16)
