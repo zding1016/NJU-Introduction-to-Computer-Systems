@@ -14,5 +14,5 @@ make_instr_func(lgdt){
     operand_read(&rel);
     cpu.gdtr.base = rel.val;
     print_asm_1("lgdt", data_size == 8 ? "b" : (data_size == 16 ? "w" : "l"), len + 1, &rel);
-    return len+ 1;
+    return len;
 }
