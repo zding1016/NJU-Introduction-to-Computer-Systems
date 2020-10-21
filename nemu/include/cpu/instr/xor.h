@@ -11,4 +11,5 @@ make_instr_func(xor_i2a_v);
 make_instr_func(xor_i2a_b);
 make_instr_func(xor_i2rm_v);
 make_instr_func(xor_i2rm_b);
+make_instr_func(xor_i2rm_bv);
 #endif
