@@ -12,6 +12,7 @@ make_instr_func(lgdt){
     rel.addr += 2;
     rel.data_size = 32;
     operand_read(&rel);
-    cpu.gdtr.base =  rel.val;
+    cpu.gdtr.base = rel.val;
+    print_asm_1("lgdt", "", len, &rel);
     return len;
 }

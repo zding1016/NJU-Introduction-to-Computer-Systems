@@ -58,7 +58,7 @@ make_instr_func(jmp_far_imm){
     rel.data_size = 32;
     rel.addr = eip + 1;
 	operand_read(&rel);
-	print_asm_1("jmp", "", 7, &rel);
+	print_asm_1("ljmp", "", 7, &rel);
 	if(data_size == 16)
 		cpu.eip = rel.val & 0xFFFF;
 	else
