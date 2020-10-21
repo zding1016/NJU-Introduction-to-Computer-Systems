@@ -50,3 +50,20 @@ make_instr_func(jmp_short){
     cpu.eip += offset;
     return 2;
 }
+
+make_instr_func(jmp_far_imm){
+    OPERAND rel;
+    rel.type = OPR_IMM;
+    rel.sreg = SREG_CS;
+    rel.data_size = 32;
+    rel.addr = eip + 1;
+    
+    operand_read(&rel);
+    print_asm_1("jmp","",7, &rel);
+    if (data_size == 16)
+        cpu.esp = rel.val & 0xffff;
+    else
+        cpu.esp = rel.val;
+    cpu.cs.val = instr_fetch(eip + 5, 2);
+    return 7;
+}

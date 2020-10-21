@@ -3,8 +3,15 @@
 Put the implementations of `lgdt' instructions here.
 */
 make_instr_func(lgdt){
+    OPERAND rel;
     int len = 1;
-    decode_operand_rm
-    cpu.gdtr.base =  opr_src.val;
+    len += modrm_rm(eip + 1, &rel);
+    rel.data_size = 16;
+    operand_read(&rel);
+    cpu.gdtr.limit = rel.val;
+    rel.addr += 2;
+    rel.data_size = 32;
+    operand_read(&rel);
+    cpu.gdtr.base =  rel.val;
     return len;
 }
