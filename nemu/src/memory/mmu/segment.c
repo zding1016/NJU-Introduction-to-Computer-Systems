@@ -28,4 +28,6 @@ void load_sreg(uint8_t sreg)
 	cpu.segReg[sreg].type = segDesc.type;
 	cpu.segReg[sreg].privilege_level = segDesc.privilege_level;
 	cpu.segReg[sreg].soft_use = segDesc.soft_use;
+	assert(cpu.segReg[sreg].invisible.base == 0 && cpu.segReg[sreg].invisible.limit == 0xFFFFF && cpu.segReg[sreg].invisible.granularity == 1 && cpu.segReg[sreg].invisible.present == 1);
+
 }
