@@ -23,8 +23,8 @@ void load_sreg(uint8_t sreg)
 	segDesc.val[0] = paddr_read(base + index * 8, 4);
 	segDesc.val[1] = paddr_read(base + index * 8 + 4, 4);
 	
-	cpu.segReg[sreg].base = segDesc.base_31_24 << 24 + segDesc.base_23_16 << 16 + segDesc.base_15_0;
-	cpu.segReg[sreg].limit = segDesc.limit_19_16 << 16 + segDesc.limit_15_0;
+	cpu.segReg[sreg].base = (segDesc.base_31_24 << 24) + (segDesc.base_23_16 << 16) + segDesc.base_15_0;
+	cpu.segReg[sreg].limit = (segDesc.limit_19_16 << 16) + segDesc.limit_15_0;
 	cpu.segReg[sreg].privilege_level = segDesc.privilege_level;
 	assert(cpu.segReg[sreg].base == 0 && cpu.segReg[sreg].limit == 0xFFFFF && segDesc.granularity == 1);
 
