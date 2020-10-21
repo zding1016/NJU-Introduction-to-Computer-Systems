@@ -3,5 +3,8 @@
 Put the implementations of `lgdt' instructions here.
 */
 make_instr_func(lgdt){
-    return 1;
+    int len = 1;
+    decode_operand_rm
+    cpu.gdtr.base =  opr_src.val;
+    return len;
 }
