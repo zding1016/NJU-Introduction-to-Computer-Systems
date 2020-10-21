@@ -27,5 +27,5 @@ void load_sreg(uint8_t sreg)
 	cpu.segReg[sreg].limit = segDesc.limit_19_16 << 16 | segDesc.limit_15_0;
 	cpu.segReg[sreg].type = segDesc.type;
 	cpu.segReg[sreg].privilege_level = segDesc.privilege_level;
-	cpu.segReg[sreg].soft_use = segDesc.soft_use.
+	cpu.segReg[sreg].soft_use = segDesc.soft_use;
 }
