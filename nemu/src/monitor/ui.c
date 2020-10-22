@@ -205,7 +205,7 @@ cmd_handler(cmd_x)
         int list = 0;
         printf("0x%08x:\t",addr);
         for (int i = 0; i < 4 * num; i += 4) {
-            printf("0x%08x", paddr_read(addr + i, 4));
+            printf("0x%08x", vaddr_read(addr + i, SREG_CS, 4));
             printf("\t");
             list = (list + 1) % 4;
             if (i == 4 * (num - 1)){
