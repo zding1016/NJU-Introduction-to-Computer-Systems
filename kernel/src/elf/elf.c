@@ -41,10 +41,21 @@ uint32_t loader()
 			//panic("Please implement the loader");
 
 /* TODO: copy the segment from the ELF file to its proper memory area */
+#ifndef IA32_PAGE
             char *mem = (char *)(0x0 + ph->p_vaddr);
             memcpy(mem, (char *)(ph->p_offset), ph->p_filesz);
+#else
+
+#endif
+
 /* TODO: zeror the memory area [vaddr + file_sz, vaddr + mem_sz) */
+#ifndef IA32_PAGE
             memset(mem + ph->p_filesz, 0, ph->p_memsz - ph->p_filesz);
+#else
+
+#endif
+
+
 #ifdef IA32_PAGE
 			/* Record the program break for future use */
 			extern uint32_t brk;
