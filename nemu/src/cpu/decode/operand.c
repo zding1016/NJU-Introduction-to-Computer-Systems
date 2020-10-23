@@ -9,7 +9,7 @@ void operand_read(OPERAND *opr)
 	switch (opr->type)
 	{
 	case OPR_MEM:
-		//assert(opr->sreg == SREG_DS || opr->sreg == SREG_SS ...);
+		assert(opr->sreg == SREG_DS || opr->sreg == SREG_SS || opr->sreg == SREG_ES || opr->sreg == SREG_CS || opr->sreg == SREG_FS || opr->sreg == SREG_GS);
 		// thank Peiwen Yu from NJU CS'16 for fixing the data size issue
 		opr->val = vaddr_read(opr->addr, opr->sreg, opr->data_size / 8);
 		break;
@@ -81,7 +81,7 @@ void operand_write(OPERAND *opr)
 	{
 	case OPR_MEM:
 		// data size here
-		//assert(opr->sreg == SREG_DS || opr->sreg == SREG_SS);
+		assert(opr->sreg == SREG_DS || opr->sreg == SREG_SS);
 		vaddr_write(opr->addr, opr->sreg, opr->data_size / 8, opr->val);
 		break;
 	case OPR_REG:
