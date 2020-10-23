@@ -6,6 +6,7 @@ make_instr_func(ret_near){
     OPERAND src;
     src.type = OPR_MEM;
     src.data_size = 32;
+    src.sreg = SREG_CS;
     src.addr = cpu.esp;
     operand_read(&src);
     print_asm_0("ret","",1);
@@ -19,6 +20,7 @@ make_instr_func(ret_near_imm16){
     OPERAND mem;
     mem.type = OPR_MEM;
     mem.data_size = 32;
+    mem.sreg = SREG_CS;
     mem.addr = cpu.esp;
     operand_read(&mem);
     cpu.eip = mem.val;
