@@ -57,7 +57,8 @@ make_instr_func(jmp_far_imm){
 	ptr16.type = ptr32.type = OPR_IMM;
 	ptr16.data_size = 16;
 	ptr32.data_size = 32;
-
+    ptr16.sreg = SREG_CS;
+    ptr32.sreg = SREG_CS;
 	ptr16.addr = eip + 5;
 	ptr32.addr = eip + 1;
 
