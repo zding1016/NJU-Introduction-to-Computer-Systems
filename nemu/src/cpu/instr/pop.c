@@ -5,12 +5,13 @@ Put the implementations of `pop' instructions here.
 static void instr_execute_1op(){
     opr_dest.data_size = data_size;
     opr_dest.type = OPR_MEM;
-    opr_dest.sreg = SREG_SS;
     opr_dest.addr = cpu.esp;
+    opr_dest.sreg = SREG_CS;
     operand_read(&opr_dest);
     
     cpu.esp += (32 / 8);
     opr_src.val = opr_dest.val;
+    opr_src.sreg = SREG_SS;
     operand_write(&opr_src);
 }
 
