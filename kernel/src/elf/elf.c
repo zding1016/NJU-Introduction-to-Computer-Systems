@@ -45,17 +45,18 @@ uint32_t loader()
             char *mem = (char *)(0x0 + ph->p_vaddr);
             memcpy(mem, (char *)(ph->p_offset), ph->p_filesz);
 #else
-            char *mem = (char *)(mm_malloc(ph->p_vaddr, ph->p_memsz));
+            //char *mem = (char *)(mm_malloc(ph->p_vaddr, ph->p_memsz));
 #endif
 
 /* TODO: zeror the memory area [vaddr + file_sz, vaddr + mem_sz) */
 #ifndef IA32_PAGE
             memset(mem + ph->p_filesz, 0, ph->p_memsz - ph->p_filesz);
 #else
-            ide_read((uint8_t *)mem, ph->p_offset, ph->p_filesz);
+            //ide_read((uint8_t *)mem, ph->p_offset, ph->p_filesz);
 #endif
 
-
+uint32_t paddr=mm_malloc(ph->p_vaddr,ph->p_memsz);
+			ide_read((uint8_t *)paddr,ph->p_offset,ph->p_filesz);
 #ifdef IA32_PAGE
 			/* Record the program break for future use */
 			extern uint32_t brk;
