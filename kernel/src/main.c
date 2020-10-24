@@ -79,7 +79,7 @@ void init_cond()
 	 * Note that the output is actually performed only when
 	 * the serial port is available in NEMU.
 	 */
-	BREAK_POINT;
+	//BREAK_POINT;
 	Log("Hello, NEMU world!");
 
 #ifdef HAS_DEVICE_VGA
@@ -87,9 +87,9 @@ void init_cond()
 	video_mapping_write_test();
 #endif
 	/* Load the program. */
-	BREAK_POINT;
+	//BREAK_POINT;
 	uint32_t eip = loader();
-	BREAK_POINT;
+	//BREAK_POINT;
 #ifdef HAS_DEVICE_VGA
 	/* Read data in the video memory to check whether 
 	 * the test data is written sucessfully.
