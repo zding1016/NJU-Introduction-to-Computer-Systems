@@ -195,7 +195,7 @@ instr_func opcode_2_byte_entry[256] = {
     /* 0x94 - 0x97*/ sete_b, setne_b, setbe_b, seta_b,
     /* 0x98 - 0x9b*/ sets_b, setns_b, setp_b, setnp_b,
     /* 0x9c - 0x9f*/ setl_b, setge_b, setle_b, setg_b,
-    /* 0xa0 - 0xa3*/ inv, inv, inv, __ref_bt_r2rm_v,
+    /* 0xa0 - 0xa3*/ inv, inv, inv, bt_r2rm_v,
     /* 0xa4 - 0xa7*/ inv, inv, inv, inv,
     /* 0xa8 - 0xab*/ inv, inv, inv, inv,
     /* 0xac - 0xaf*/ inv, inv, inv, __ref_imul_rm2r_v,
