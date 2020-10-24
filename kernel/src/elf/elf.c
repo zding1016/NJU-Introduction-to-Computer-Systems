@@ -52,7 +52,7 @@ uint32_t loader()
 #ifndef IA32_PAGE
             memset(mem + ph->p_filesz, 0, ph->p_memsz - ph->p_filesz);
 #else
-            ide_read((uint8_t *)mem, ELF_OFFSET_IN_DISK + ph->p_offset, ph->p_filesz);
+            ide_read((uint8_t *)mem, ph->p_offset, ph->p_filesz);
 #endif
 
 
