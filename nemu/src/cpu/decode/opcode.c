@@ -53,7 +53,7 @@ instr_func opcode_entry[256] = {
     /* 0xc4 - 0xc7*/ inv, inv, mov_i2rm_b, mov_i2rm_v,
     /* 0xc8 - 0xcb*/ inv, leave, inv, inv,
     /* 0xcc - 0xcf*/ inv, inv, inv, inv,
-    /* 0xd0 - 0xd3*/ __ref_group_2_1b, __ref_group_2_1v, __ref_group_2_cb, __ref_group_2_cv,
+    /* 0xd0 - 0xd3*/ group_2_1b, group_2_1v, group_2_cb, group_2_cv,
     /* 0xd4 - 0xd7*/ inv, inv, inv, inv,
     /* 0xd8 - 0xdb*/ __ref_group_x87_d8, __ref_group_x87_d9, __ref_group_x87_da, __ref_group_x87_db,
     /* 0xdc - 0xdf*/ __ref_group_x87_dc, __ref_group_x87_dd, __ref_group_x87_de, __ref_group_x87_df,
