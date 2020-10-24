@@ -55,8 +55,8 @@ uint32_t loader()
             //ide_read((uint8_t *)mem, ph->p_offset, ph->p_filesz);
 #endif
 
-            //uint32_t paddr=mm_malloc(ph->p_vaddr,ph->p_memsz);
-			//ide_read((uint8_t *)paddr,ph->p_offset,ph->p_filesz);
+            uint32_t paddr=mm_malloc(ph->p_vaddr,ph->p_memsz);
+			ide_read((uint8_t *)paddr,ph->p_offset,ph->p_filesz);
 #ifdef IA32_PAGE
 			/* Record the program break for future use */
 			extern uint32_t brk;
