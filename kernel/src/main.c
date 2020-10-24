@@ -89,7 +89,7 @@ void init_cond()
 	/* Load the program. */
 	//BREAK_POINT;
 	uint32_t eip = loader();
-	BREAK_POINT;
+	//BREAK_POINT;
 #ifdef HAS_DEVICE_VGA
 	/* Read data in the video memory to check whether 
 	 * the test data is written sucessfully.
