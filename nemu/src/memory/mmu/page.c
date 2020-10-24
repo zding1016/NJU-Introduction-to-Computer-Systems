@@ -14,7 +14,7 @@ paddr_t page_translate(laddr_t laddr)
 	PDE* pde = (PDE *)(hw_mem + (cpu.cr3.pdbr << 12) + (dir << 2));
 	PTE* pte = (PTE *)(hw_mem + (pde->page_frame << 12) + (page << 2));
 	assert (pde->present == 1 && pte->present == 1);
-	return pte->page_frame << 12 | offset;
+	return (pte->page_frame << 12) + offset;
 #else
 	return tlb_read(laddr) | (laddr & PAGE_MASK);
 #endif
