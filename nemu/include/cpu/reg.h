@@ -45,7 +45,7 @@
 #ifdef IA32_PAGE
     typedef union{
         struct {
-            uint32_t reserved : 12;
+            uint32_t reserve : 12;
             uint32_t pdbr : 20;
         };
         uint32_t val;

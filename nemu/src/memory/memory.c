@@ -41,16 +41,52 @@ void paddr_write(paddr_t paddr, size_t len, uint32_t data)
 
 uint32_t laddr_read(laddr_t laddr, size_t len)
 {
-    
-    
-	return paddr_read(laddr, len);
+    assert (len == 1 || len == 2 || len == 4);
+    if (cpu.cr0.pe && cpu.cr0.pg) {
+        uint32_t begin_page = (laddr >> 12) & 0x1;
+        uint32_t end_page = ((laddr + len - 1) >> 12) & 0x1;
+        if (begin_page != end_page) {
+            uint32_t offset = laddr & 0xfff;
+            uint32_t len_first = 0xfff - offset + 1;
+            paddr_t paddr = page_translate(laddr);
+            uint32_t result = paddr_read(paddr, len_first);
+            paddr = page_translate(laddr + len_first);
+            result = result | paddr_read(paddr, len - len_first) << (len_first * 8);
+            return result;
+        }else {
+            paddr_t paddr = page_translate(laddr);
+            return paddr_read(paddr, len);
+        }
+    }
+    else {
+        return paddr_read(laddr, len);
+    }
 }
 
 void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 {
-    
-    
-	paddr_write(laddr, len, data);
+    assert (len == 1 || len == 2 || len == 4);
+    if (cpu.cr0.pe && cpu.cr0.pg) {
+        uint32_t begin_page = (laddr >> 12) & 0x1;
+        uint32_t end_page = ((laddr + len -1) >> 12) & 0x1;
+        if (begin_page != end_page) {
+            uint32_t offset = laddr & 0xfff;
+            uint32_t len_first = 0xfff - offset + 1;
+            uint32_t data_first = (data >> ((len - len_first)*8)) & (0x1 << (len_first*8));
+            uint32_t data_second = (data & (0x1 << (len_first*8)));
+            paddr_t paddr = page_translate(laddr);
+            paddr_write(paddr, len_first, data_first);
+            paddr_t paddr = page_translate(laddr + len_first);
+            paddr_write(paddr, len - len_first, data_second);
+        }
+        else {
+            paddr_t paddr = page_translate(laddr);
+            paddr_write(paddr, len, data);
+        }
+    }
+    else {
+	    paddr_write(laddr, len, data);
+    }
 }
 
 uint32_t vaddr_read(vaddr_t vaddr, uint8_t sreg, size_t len)
