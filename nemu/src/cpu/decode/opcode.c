@@ -155,7 +155,7 @@ instr_func group_x87_df_entry[8] =
 // {inv, inv, inv, inv, inv, inv, inv, inv};
 
 instr_func opcode_2_byte_entry[256] = {
-    /* 0x00 - 0x03*/ inv, __ref_group_7, inv, inv,
+    /* 0x00 - 0x03*/ inv, group_7, inv, inv,
     /* 0x04 - 0x07*/ inv, inv, inv, inv,
     /* 0x08 - 0x0b*/ inv, inv, inv, inv,
     /* 0x0c - 0x0f*/ inv, inv, inv, inv,
@@ -163,7 +163,7 @@ instr_func opcode_2_byte_entry[256] = {
     /* 0x14 - 0x17*/ inv, inv, inv, inv,
     /* 0x18 - 0x1b*/ inv, inv, inv, inv,
     /* 0x1c - 0x1f*/ inv, inv, inv, inv,
-    /* 0x20 - 0x23*/ __ref_mov_c2r_l, inv, __ref_mov_r2c_l, inv,
+    /* 0x20 - 0x23*/ mov_c2r_l, inv, mov_r2c_l, inv,
     /* 0x24 - 0x27*/ inv, inv, inv, inv,
     /* 0x28 - 0x2b*/ inv, inv, inv, inv,
     /* 0x2c - 0x2f*/ inv, inv, inv, inv,
