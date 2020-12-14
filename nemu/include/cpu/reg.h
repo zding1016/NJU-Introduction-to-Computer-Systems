@@ -51,6 +51,13 @@
         uint32_t val;
     }CR3;
 #endif
+
+#ifdef 
+    typedef struct{
+	    uint32_t limit:16;
+	    uint32_t base:32;
+    } IDTR;
+#endif
 // define the structure of registers
 typedef struct
 {
