@@ -57,7 +57,7 @@
 		movl $(128 << 20), %esp
 		sub $16, %esp
 		jmp init				# never return
-
+        #jmp 0xcc6
 	# GDT
 	.p2align 2                    # force 4 byte alignment
 	gdt:
