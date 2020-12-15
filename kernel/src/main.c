@@ -79,7 +79,7 @@ void init_cond()
 	 * Note that the output is actually performed only when
 	 * the serial port is available in NEMU.
 	 */
-	BREAK_POINT;
+	//BREAK_POINT;
 	Log("Hello, NEMU world!");
 
 #ifdef HAS_DEVICE_VGA
