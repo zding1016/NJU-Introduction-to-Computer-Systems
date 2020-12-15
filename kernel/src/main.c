@@ -21,7 +21,6 @@ void init_cond();
  */
 void init()
 {
-    Log("Hello, NEMU world!");
 #ifdef IA32_PAGE
 	/* We must set up kernel virtual memory first because our kernel thinks it 
 	 * is located at 0xc0030000, which is set by the linking options in Makefile.
@@ -80,7 +79,7 @@ void init_cond()
 	 * Note that the output is actually performed only when
 	 * the serial port is available in NEMU.
 	 */
-	//BREAK_POINT;
+	BREAK_POINT;
 	Log("Hello, NEMU world!");
 
 #ifdef HAS_DEVICE_VGA
