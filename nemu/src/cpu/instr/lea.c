@@ -8,7 +8,7 @@ make_instr_func(lea){
     //if (data_size == 16) opr_dest.val = opr_src.addr & 0xffff;
     opr_dest.val = opr_src.addr;
     print_asm_2("lea",opr_dest.data_size == 8 ? "b" :(opr_dest.data_size == 16 ? "w" : "l"), len, &opr_src, &opr_dest);
-    opr_dest.sreg = SREG_DS;
+    opr_dest.sreg = SREG_SS;
     operand_write(&opr_dest);
     return len;
 }
