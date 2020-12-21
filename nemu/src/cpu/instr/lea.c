@@ -3,12 +3,13 @@
 Put the implementations of `lea' instructions here.
 */
 make_instr_func(lea){
-    opr_src.data_size = opr_dest.data_size = data_size;
-    int len = 1 + modrm_r_rm(eip + 1, &opr_dest, &opr_src);
-    //if (data_size == 16) opr_dest.val = opr_src.addr & 0xffff;
+    int len = 1;
+    opr_dest.data_size = data_size;
+    opr_src.data_size = data_size;
+    len += modrm_r_rm(eip + 1, &opr_dest, &opr_src);
     opr_dest.val = opr_src.addr;
-    print_asm_2("lea",opr_dest.data_size == 8 ? "b" :(opr_dest.data_size == 16 ? "w" : "l"), len, &opr_src, &opr_dest);
     opr_dest.sreg = SREG_SS;
     operand_write(&opr_dest);
+    print_asm_2("lea", opr_dest.data_size == 8 ? "b" :(opr_dest.data_size == 16 ? "w" : "l"), len, &opr_src, &opr_dest);
     return len;
 }
