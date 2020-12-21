@@ -23,7 +23,7 @@ make_instr_func(jmp_near)
 make_instr_func(jmp_near_indirect){
     int len = 1;
     len += modrm_rm(eip + 1, &opr_src);
-    opr_src.sreg = SREG_SS;
+    opr_src.sreg = SREG_CS;
     operand_read(&opr_src);
     print_asm_1("jmp","",len,&opr_src);
     cpu.eip = opr_src.val;
