@@ -17,7 +17,22 @@ void create_video_mapping()
 	 * some page tables to create this mapping.
 	 */
 
-	panic("please implement me");
+    PDE *pdp = (PDE *)va_to_pa(get_updir());
+    //	pdp[VMEM_ADDR/PT_SIZE].val=0;
+    pdp[VMEM_ADDR / PT_SIZE].page_frame = (uint32_t)va_to_pa(vmem_pt) >> 12;
+    pdp[VMEM_ADDR / PT_SIZE].present = 1;
+    for (int index = VMEM_ADDR / PAGE_SIZE; index < (VMEM_ADDR + SCR_SIZE) / PAGE_SIZE + 1; index++)
+    {
+        //Log("addr is %x",vmem_pt+index);
+        //		vmem_pt[index].val=0;
+        vmem_pt[index].page_frame = index + (NR_PT - 1) * NR_PTE;
+        //Log("%x.val is %x\n",index,vmem_pt[index].page_frame);
+        vmem_pt[index].present = 1;
+    }
+    
+    //panic("please implement me");
+    
+    
 }
 
 void video_mapping_write_test()
