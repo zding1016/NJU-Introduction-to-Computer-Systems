@@ -3,16 +3,18 @@
 Put the implementations of `pop' instructions here.
 */
 static void instr_execute_1op(){
-    opr_dest.data_size = data_size;
-    opr_dest.type = OPR_MEM;
-    opr_dest.addr = cpu.esp;
-    opr_dest.sreg = SREG_CS;
-    operand_read(&opr_dest);
-    
-    cpu.esp += (32 / 8);
-    opr_src.val = opr_dest.val;
-    opr_src.sreg = SREG_SS;
-    operand_write(&opr_src);
+    opr_dest.addr = opr_src.addr;
+    opr_dest.type = opr_src.type;
+    opr_dest.data_size = opr_src.data_size;
+    opr_src.addr = cpu.esp;
+    opr_src.type = OPR_MEM;
+    operand_read(&opr_src);
+    opr_dest.val = opr_src.val;
+    if (data_size == 16)
+        cpu.esp += 2;
+    else
+        cpu.esp += 4;         //出栈,修改指针
+    operand_write(&opr_dest); //写入dest
 }
 
 make_instr_impl_1op(pop, r, v)

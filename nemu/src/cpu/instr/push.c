@@ -20,6 +20,7 @@ make_instr_impl_1op(push, r, v)
 make_instr_impl_1op(push, rm, v)
 make_instr_impl_1op(push, i, b)
 make_instr_impl_1op(push, i, v)
+make_instr_impl_1op(push, r, w)
 
 make_instr_func(pusha){
 	uint32_t t=cpu.esp;
