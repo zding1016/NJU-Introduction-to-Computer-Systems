@@ -36,56 +36,58 @@ make_instr_func(mov_zrm82r_v) {
 }
 
 make_instr_func(mov_zrm162r_l) {
-        int len = 1;
-        OPERAND r, rm;
-        r.data_size = 32;
-        rm.data_size = 16;
-        len += modrm_r_rm(eip + 1, &r, &rm);
+    int len = 1;
+    OPERAND r, rm;
+    r.data_size = 32;
+    rm.data_size = 16;
+    len += modrm_r_rm(eip + 1, &r, &rm);
 
-        operand_read(&rm);
-        r.val = rm.val;
-        operand_write(&r);
-	print_asm_2("mov", "", len, &rm, &r);
-        return len;
+    operand_read(&rm);
+    r.val = rm.val;
+    operand_write(&r);
+    print_asm_2("mov", "", len, &rm, &r);
+    return len;
 }
 
 make_instr_func(mov_srm82r_v) {
-        int len = 1;
-        OPERAND r, rm;
-        r.data_size = data_size;
-        rm.data_size = 8;
-        len += modrm_r_rm(eip + 1, &r, &rm);
-        
-	operand_read(&rm);
-        r.val = sign_ext(rm.val, 8);
-        operand_write(&r);
-	print_asm_2("mov", "", len, &rm, &r);
-        return len;
+    int len = 1;
+    OPERAND r, rm;
+    r.data_size = data_size;
+    rm.data_size = 8;
+    len += modrm_r_rm(eip + 1, &r, &rm);
+    operand_read(&rm);
+    r.val = sign_ext(rm.val, 8);
+    operand_write(&r);
+    print_asm_2("mov", "", len, &rm, &r);
+    return len;
 }
 
 make_instr_func(mov_srm162r_l) {
-        int len = 1;
-        OPERAND r, rm;
-        r.data_size = 32;
-        rm.data_size = 16;
-        len += modrm_r_rm(eip + 1, &r, &rm);
-        operand_read(&rm);
-        r.val = sign_ext(rm.val, 16);
-        operand_write(&r);
+    int len = 1;
+    OPERAND r, rm;
+    r.data_size = 32;
+    rm.data_size = 16;
+    len += modrm_r_rm(eip + 1, &r, &rm);
+    operand_read(&rm);
+    r.val = sign_ext(rm.val, 16);
+    operand_write(&r);
 
-	print_asm_2("mov", "", len, &rm, &r);
-        return len;
+    print_asm_2("mov", "", len, &rm, &r);
+    return len;
 }
 
 make_instr_func(mov_rm2s_w) {
     int len = 1;
-    decode_data_size_w
-    decode_operand_rm2r
-    operand_read(&opr_src);
-    opr_dest.val = opr_src.val;
-    opr_dest.type = OPR_SREG;
-    operand_write(&opr_dest);
-    print_asm_2("mov", "w", len, &opr_src, &opr_dest);
+    OPERAND s, rm;
+    s.data_size = 16;
+    rm.data_size = 16;
+    len += modrm_r_rm(eip + 1, &s, &rm);
+    operand_read(&rm);
+    s.val = rm.val;
+    s.type = OPR_SREG;
+    operand_write(&s);
+    load_sreg(s.addr);
+    print_asm_2("mov", "w", len, &rm, &s);
     return len;
 }
 
