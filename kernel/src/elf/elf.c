@@ -47,11 +47,15 @@ uint32_t loader()
 			char* mem = (char*)mm_malloc(ph->p_vaddr, ph->p_memsz);
 			//Log("men:%x, vaddr:%x, memsz:%x", mem, ph->p_vaddr, ph->p_memsz);
 #endif
-
+#ifndef HAS_DEVICE_IDE
 			memcpy(mem, (char*)ph->p_offset, ph->p_filesz);
-
+#else 
+            ide_read((void *)paddr,ELF_OFFSET_IN_DISK + ph->p_offset,ph->p_filesz);
+#endif
 			/* zero the memory area [vaddr + file_sz, vaddr + mem_sz) */
-			memcpy(mem + ph->p_filesz, 0, ph->p_memsz - ph->p_filesz);
+			if (ph->p_memsz > ph->p_filesz) {
+				memset((void *)(mem+ph->p_filesz), 0, ph->p_memsz - ph->p_filesz);
+			}
 
 #ifdef IA32_PAGE
 			/* Record the program break for future use */

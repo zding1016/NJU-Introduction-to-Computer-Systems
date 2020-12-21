@@ -30,7 +30,7 @@ void raise_intr(uint8_t intr_no)
 	gate.val[1]=laddr_read(((cpu.idtr.base+intr_no*8)+4),4);
 	cpu.eip=gate.offset_15_0|(gate.offset_31_16<<16);
 	cpu.cs.val=gate.selector;
-	if(gate.type==6){
+	if(gate.type==0xe){
 		cpu.eflags.IF=0;
 	}
 #endif
