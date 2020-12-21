@@ -5,8 +5,8 @@ Put the implementations of `call' instructions here.
 make_instr_func(call_near){
     OPERAND src;
     src.type = OPR_IMM;
-    src.addr = eip + 1;
-    src.sreg = SREG_CS;
+    src.addr = cpu.eip + 1;
+    src.sreg = SREG_SS;
     src.data_size = data_size;
     operand_read(&src);
     
@@ -29,22 +29,18 @@ make_instr_func(call_near){
 
 make_instr_func(call_near_indirect){
     int len = 1;
-    OPERAND rel, mem;
-    rel.data_size = data_size;
-    rel.sreg = SREG_CS;
-    len += modrm_rm(eip + 1, &rel);
-    operand_read(&rel);
-    print_asm_1("call","",len, &rel);
-    cpu.esp = cpu.esp - data_size / 8;
-    mem.data_size = data_size;
-    mem.type = OPR_MEM;
-    mem.sreg = SREG_SS;
-    mem.addr = cpu.esp;
-    mem.val = cpu.eip + len;
-    operand_write(&mem);
-    if (data_size == 16)
-        cpu.eip = rel.val &0xffff;
-    else
-        cpu.eip = rel.val;
+    len += modrm_rm(eip + 1, &opr_src);
+    opr_src.sreg = SREG_SS;
+    operand_read(&opr_src);
+    print_asm_1("call", opr_src.data_size == 8 ? "b" : (opr_src.data_size == 16 ? "w" : "l"), 5, &opr_src);
+    cpu.eip += len;
+    cpu.esp -= 4;
+    opr_dest.val = cpu.eip;
+    opr_dest.data_size = data_size;
+    opr_dest.addr = cpu.esp;
+    opr_dest.type = OPR_MEM;
+    opr_dest.sreg = SREG_SS;
+    operand_write(&opr_dest);
+    cpu.eip = opr_src.val;
     return 0;
 }
