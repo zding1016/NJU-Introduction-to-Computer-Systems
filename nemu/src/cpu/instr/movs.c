@@ -37,3 +37,35 @@ make_instr_func(movs_b)
 	print_asm_0("movs (%%edi), (%%esi)", "", 1);
 	return 1;
 }
+
+make_instr_func(mov_c2r_l)
+{
+    int len=1;
+    opr_src.data_size=32;
+    opr_dest.data_size=32;
+    len+=modrm_r_rm(eip+1,&opr_src,&opr_dest);
+    opr_src.type=OPR_CREG;
+    operand_read(&opr_src);
+    opr_dest.val=opr_src.val;
+    operand_write(&opr_dest);
+    print_asm_2("mov","c2r",len,&opr_src,&opr_dest);
+    return len;
+}
+
+make_instr_func(mov_r2c_l)
+{
+    int len=1;
+    opr_src.data_size=32;
+    opr_dest.data_size=32;
+    len+=modrm_r_rm(eip+1,&opr_dest,&opr_src);
+    
+    opr_dest.type=OPR_CREG;
+    operand_read(&opr_src);
+    opr_dest.val=opr_src.val;
+    operand_write(&opr_dest);
+    print_asm_2("mov","r2c",len,&opr_src,&opr_dest);
+    //for(uint8_t i=0;i<6;i++) load_sreg(i);
+
+    return len;
+}
+

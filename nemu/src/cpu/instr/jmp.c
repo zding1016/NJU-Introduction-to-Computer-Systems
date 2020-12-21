@@ -22,53 +22,47 @@ make_instr_func(jmp_near)
 
 make_instr_func(jmp_near_indirect){
     int len = 1;
-    OPERAND rel;
-    rel.data_size = data_size;
-    len += modrm_rm(eip + 1, &rel);
-    rel.sreg = SREG_CS;
-    operand_read(&rel);
-    print_asm_1("jmp","",len,&rel);
-    if (data_size == 16)
-        cpu.eip = rel.val & 0xffff;
-    else
-        cpu.eip = rel.val;
+    len += modrm_rm(eip + 1, &opr_src);
+    opr_src.sreg = SREG_SS;
+    operand_read(&opr_src);
+    print_asm_1("jmp","",len,&opr_src);
+    cpu.eip = opr_src.val;
     return 0;
     
 }
 
 
 make_instr_func(jmp_short){
-    OPERAND rel;
-    rel.type = OPR_IMM;
-    rel.sreg = SREG_CS;
-    rel.data_size = 8;
-    rel.addr = eip + 1;
+    opr_src.type = OPR_IMM;
+    opr_src.sreg = SREG_CS;
+    opr_src.data_size = 8;
+    opr_src.addr = eip + 1;
     
-    operand_read(&rel);
+    operand_read(&opr_src);
     
-    int offset = sign_ext(rel.val, rel.data_size);
-    print_asm_1("jmp","", 2,&rel);
+    int offset = sign_ext(opr_src.val, opr_src.data_size);
+    print_asm_1("jmp", "", 2, &opr_src);
     cpu.eip += offset;
     return 2;
 }
 
 make_instr_func(jmp_far_imm){
-    OPERAND ptr16, ptr32;
-	ptr16.type = ptr32.type = OPR_IMM;
-	ptr16.data_size = 16;
-	ptr32.data_size = 32;
-    ptr16.sreg = SREG_CS;
-    ptr32.sreg = SREG_CS;
-	ptr16.addr = eip + 5;
-	ptr32.addr = eip + 1;
-
-	operand_read(&ptr16);
-	operand_read(&ptr32);
-
-	print_asm_2("ljmp", "", 7, &ptr16, &ptr32);
-	cpu.cs.val = ptr16.val;
-	cpu.eip = ptr32.val;
-
-	load_sreg(1);
+    opr_src.data_size = 16;
+    opr_src.type = OPR_IMM;
+    opr_src.sreg = SREG_CS;
+    opr_src.addr = eip + 5;
+    
+    opr_dest.data_size = 32;
+    opr_dest.type = OPR_IMM;
+    opr_dest.sreg = SREG_CS;
+    opr_dest.addr = eip + 1;
+    
+    operand_read(&opr_src);
+    operand_read(&opr_dest);
+    
+    print_asm_2("ljmp", "", 7, &opr_src, &opr_dest);
+    cpu.cs.val = opr_src.val;
+    load_sreg(1);
+    cpu.eip = opr_dest.val;
     return 0;
 }

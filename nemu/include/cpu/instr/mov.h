@@ -42,7 +42,5 @@ make_instr_func(cmove_rm2r_v);
 
 
 make_instr_func(mov_rm2s_w);
-make_instr_func(mov_c2r_l);
-make_instr_func(mov_r2c_l);
 
 #endif
