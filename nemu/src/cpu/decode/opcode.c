@@ -148,7 +148,7 @@ instr_func group_x87_de_entry[8] =
 
 /* 0xdf */
 instr_func group_x87_df_entry[8] =
-    {inv, inv, inv, inv, x87_fnstsw, x87_fucomip, inv, inv};
+    {inv, inv, inv, inv, x87_fnstsw, x87_fucomip, x87_fcomip, inv};
 
 /* 0x.. */
 // instr_func group_5_indirect_entry[8] =
