@@ -22,22 +22,18 @@ make_instr_impl_1op(push, i, b)
 make_instr_impl_1op(push, i, v)
 make_instr_impl_1op(push, r, w)
 
-make_instr_func(pusha){
-	uint32_t t=cpu.esp;
-	for(int i=0;i<8;i++){
-		OPERAND rel;
-		rel.data_size=data_size;
-		rel.type=OPR_MEM;
-		rel.sreg=SREG_SS;
-		cpu.esp-=4;
-		rel.addr=cpu.esp;
-		if(i==4){
-			rel.val=t;
-		}
-		else{
-			rel.val=cpu.gpr[i].val;
-		}
-		operand_write(&rel);
-	}
-	return 1;
+make_instr_func(pusha)
+{
+    uint32_t temp=cpu.esp;
+    print_asm_0("push","a",1);
+    for(int i=0;i<8;i++){
+        cpu.esp-=4;
+        opr_dest.data_size=data_size;
+        opr_dest.val=i==4?temp:cpu.gpr[i].val;
+        opr_dest.addr=cpu.esp;
+        opr_dest.type=OPR_MEM;
+        opr_dest.sreg=SREG_SS;
+        operand_write(&opr_dest);
+    }
+    return 1;
 }
