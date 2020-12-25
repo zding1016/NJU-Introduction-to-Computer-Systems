@@ -4,7 +4,6 @@
 
 void push_eflags(){
 	cpu.esp-=4;
-	//uint32_t t=cpu.eflags.val;
 	vaddr_write(cpu.esp,SREG_SS,4,cpu.eflags.val);
 }
 void push_cs(){
