@@ -5,15 +5,15 @@
 void push_eflags(){
 	cpu.esp-=4;
 	//uint32_t t=cpu.eflags.val;
-	vaddr_write(cpu.esp,2,4,cpu.eflags.val);
+	vaddr_write(cpu.esp,SREG_SS,4,cpu.eflags.val);
 }
 void push_cs(){
 	cpu.esp-=4;
-	vaddr_write(cpu.esp,2,4,(cpu.cs.val&0x0000ffff));
+	vaddr_write(cpu.esp,SREG_SS,4,(cpu.cs.val&0x0000ffff));
 }
 void push_eip(){
 	cpu.esp-=4;
-	vaddr_write(cpu.esp,2,4,cpu.eip);
+	vaddr_write(cpu.esp,SREG_SS,4,cpu.eip);
 }
 
 void raise_intr(uint8_t intr_no)
@@ -26,13 +26,11 @@ void raise_intr(uint8_t intr_no)
 	push_cs();
 	push_eip();
 	//set flag
-	cpu.eflags.IF=0;
-	cpu.eflags.TF=0;
 	GateDesc gate;
 	gate.val[0]=laddr_read((cpu.idtr.base+intr_no*8),4);
 	gate.val[1]=laddr_read(((cpu.idtr.base+intr_no*8)+4),4);
 	cpu.eip=gate.offset_15_0|(gate.offset_31_16<<16);
-	//cpu.cs.val=gate.selector;
+	cpu.cs.val=gate.selector;
 	if(gate.type==0xe){
 		cpu.eflags.IF=0;
 	}
