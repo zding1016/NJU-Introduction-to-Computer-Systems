@@ -172,7 +172,7 @@ instr_func opcode_2_byte_entry[256] = {
     /* 0x38 - 0x3b*/ inv, inv, inv, inv,
     /* 0x3c - 0x3f*/ inv, inv, inv, inv,
     /* 0x40 - 0x43*/ inv, inv, inv, inv,
-    /* 0x44 - 0x47*/ cmove_rm2r_v, cmovne_rm2r_v, nemu_trap, cmova_rm2r_v,
+    /* 0x44 - 0x47*/ cmove_rm2r_v, cmovne_rm2r_v, inv, cmova_rm2r_v,
     /* 0x48 - 0x4b*/ cmovs_rm2r_v, cmovns_rm2r_v, inv, inv,
     /* 0x4c - 0x4f*/ inv, cmovge_rm2r_v, inv, inv,
     /* 0x50 - 0x53*/ inv, inv, inv, inv,
