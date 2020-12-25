@@ -25,11 +25,14 @@ void raise_intr(uint8_t intr_no)
 	push_eflags();
 	push_cs();
 	push_eip();
+	//set flag
+	cpu.eflags.IF=0;
+	cpu.eflags.TF=0;
 	GateDesc gate;
 	gate.val[0]=laddr_read((cpu.idtr.base+intr_no*8),4);
 	gate.val[1]=laddr_read(((cpu.idtr.base+intr_no*8)+4),4);
 	cpu.eip=gate.offset_15_0|(gate.offset_31_16<<16);
-	cpu.cs.val=gate.selector;
+	//cpu.cs.val=gate.selector;
 	if(gate.type==0xe){
 		cpu.eflags.IF=0;
 	}
@@ -40,7 +43,7 @@ void raise_sw_intr(uint8_t intr_no)
 {
 	// return address is the next instruction
 	cpu.eip += 2;
-	printf("intr cpu.eip : %x\n", cpu.eip);
+	//printf("intr cpu.eip : %x\n", cpu.eip);
 	raise_intr(intr_no);
-	printf("intr cpu.eip : %x\n", cpu.eip);
+	//printf("intr cpu.eip : %x\n", cpu.eip);
 }
