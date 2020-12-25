@@ -7,7 +7,7 @@
 #define NR_PT ((SCR_SIZE + PT_SIZE - 1) / PT_SIZE) // number of page tables to cover the vmem
 
 PDE *get_updir();
-PTE vmem_pt[1024] align_to_page;
+PTE uptable[0xa0 + NR_PT] align_to_page;
 void create_video_mapping()
 {
 
@@ -17,20 +17,19 @@ void create_video_mapping()
 	 * some page tables to create this mapping.
 	 */
 
-    PDE *pdp = (PDE *)va_to_pa(get_updir());
-    //	pdp[VMEM_ADDR/PT_SIZE].val=0;
-    pdp[VMEM_ADDR / PT_SIZE].page_frame = (uint32_t)va_to_pa(vmem_pt) >> 12;
-    pdp[VMEM_ADDR / PT_SIZE].present = 1;
-    for (int index = VMEM_ADDR / PAGE_SIZE; index < (VMEM_ADDR + SCR_SIZE) / PAGE_SIZE + 1; index++)
-    {
-        //Log("addr is %x",vmem_pt+index);
-        //		vmem_pt[index].val=0;
-        vmem_pt[index].page_frame = index + (NR_PT - 1) * NR_PTE;
-        //Log("%x.val is %x\n",index,vmem_pt[index].page_frame);
-        vmem_pt[index].present = 1;
-    }
-    
-    //panic("please implement me");
+    PDE *pdir = get_updir();
+	PTE *ptable = (PTE *)va_to_pa(uptable);
+	uint32_t pdir_idx, ptable_idx, pframe_idx;
+	pframe_idx = 0;
+	pdir_idx = VMEM_ADDR / PT_SIZE;
+	pdir[pdir_idx].val = make_pde(ptable);
+	pdir[pdir_idx + KOFFSET / PT_SIZE].val = make_pde(ptable);
+	for (ptable_idx = 0; ptable_idx <= 0xaf; ptable_idx++)
+	{
+		ptable->val = make_pte(pframe_idx << 12);
+		pframe_idx++;
+		ptable++;
+	}
     
     
 }

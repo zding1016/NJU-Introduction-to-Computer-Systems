@@ -4,7 +4,9 @@
 
 #include <string.h>
 #include <stdlib.h>
-#define PIX(s,x,y) s->pixels[x + y * s->w]
+#define im
+#define pixel(surface, start_x, start_y, bias_x, bias_y) \
+	surface->pixels[(start_y + bias_y) * (surface->w) + (start_x + bias_x)]
 int get_fps();
 
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect,
@@ -30,13 +32,19 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect,
 	 * `dst' surface.
 	 */
 
-    for (int j = 0; j < h; j++)
-    {
-        for (int i = 0; i < w; i++)
-        {
-            PIX(dst, (dx + i), (dy + j)) = PIX(src, (sx + i), (sy + j));
-        }
-    }
+#ifdef im
+	for (int i = 0; i < h; i++)
+		memcpy(&pixel(dst, dx, dy, 0, i), &pixel(src, sx, sy, 0, i), w);
+#else
+	uint8_t *src_p = &src->pixels[src->w * sy + sx];
+	uint8_t *dst_p = &dst->pixels[dst->w * dy + dx];
+	for (int i = 0; i < h; i++)
+	{
+		memcpy(dst_p, src_p, w);
+		dst_p += w;
+		src_p += w;
+	}
+#endif
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color)
@@ -49,31 +57,23 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color)
 	 * NULL, fill the whole surface.
 	 */
 
-    int dx = (dstrect == NULL ? 0 : dstrect->x);
-    int dy = (dstrect == NULL ? 0 : dstrect->y);
-    int w = (dstrect == NULL ? dst->w : dstrect->w);
-    int h = (dstrect == NULL ? dst->h : dstrect->h);
-    if (dst->w - dx < w)
-    {
-        w = dst->w - dx;
-    }
-    if (dst->h - dy < h)
-    {
-        h = dst->h - dy;
-    }
-    if (dstrect != NULL)
-    {
-        dstrect->w = w;
-        dstrect->h = h;
-    }
-    Log("fill %x/%x", dx, dy);
-    for (int j = 0; j < h; j++)
-    {
-        for (int i = 0; i < w; i++)
-        {
-            PIX(dst, (dx + i), (dy + j)) = color;
-        }
-    }
+	if (dstrect)
+	{
+#ifndef im
+		uint8_t *dst_p = &dst->pixels[dst->w * dstrect->y + dstrect->x];
+#endif
+		for (int i = 0; i < dstrect->h; i++)
+		{
+#ifdef im
+			memset(&pixel(dst, dstrect->x, dstrect->y, 0, i), color, dstrect->w);
+#else
+			memset(dst_p, color, dstrect->w);
+			dst_p += dstrect->w;
+#endif
+		}
+	}
+	else
+		memset(dst->pixels, color, dst->w * dst->h);
 }
 
 void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors,
@@ -107,7 +107,7 @@ void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors,
 	{
 		/* TODO: Set the VGA palette by calling write_palette(). */
 		//assert(0);
-		write_palette(s->format->palette->colors, ncolors);
+		write_palette(s->format->palette->colors, s->format->palette->ncolors);
 	}
 }
 

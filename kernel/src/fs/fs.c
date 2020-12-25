@@ -42,7 +42,7 @@ int fs_open(const char *pathname, int flags)
     {
         if (strcmp(pathname, file_table[i].name) == 0)
         {
-            files[i + 3].used = 1;
+            files[i + 3].used = true;
             files[i + 3].offset = 0;
             //Log("file \"%s\" opend",pathname);
             return i + 3;
@@ -59,8 +59,8 @@ size_t fs_read(int fd, void *buf, size_t len)
     //panic("Please implement fs_read at fs.c");
     uint32_t real_len = len;
     //Log("Read from %s:%x %x bytes",file_table[fd-3].name,files[fd].offset,len);
-    if (files[fd].offset + len >= file_table[fd - 3].size)
-        real_len = file_table[fd - 3].size - files[fd].offset - 1;
+    if (files[fd].offset + len > file_table[fd - 3].size)
+        real_len = file_table[fd - 3].size - files[fd].offset;
     if (real_len == 0)
         return 0;
     if (files[fd].offset >= file_table[fd - 3].size)
@@ -98,22 +98,22 @@ off_t fs_lseek(int fd, off_t offset, int whence)
     {
     case SEEK_SET:
         files[fd].offset = offset;
-        return files[fd].offset;
+        break;
     case SEEK_CUR:
         files[fd].offset += offset;
-        return files[fd].offset;
+        break;
     case SEEK_END:
         files[fd].offset = file_table[fd - 3].size + offset;
-        return files[fd].offset;
+        break;
     }
-    return -1;
+    return files[fd].offset;
 }
 
 int fs_close(int fd)
 {
 	//panic("Please implement fs_close at fs.c");
     assert(fd < NR_FILES + 3);
-	files[fd].used = 0;
+	files[fd].used = false;
 	files[fd].offset = 0;
 	return 0;
 }

@@ -74,20 +74,21 @@ bool process_keys(void (*key_press_callback)(int), void (*key_release_callback)(
 	 */
     for (int i = 0; i < NR_KEYS; i++)
     {
-        if (key_state[i] == KEY_STATE_PRESS)
-        {
-            key_press_callback(keycode_hash[i]);
-            key_state[i] = KEY_STATE_EMPTY;
-            sti();
-            return true;
-        }
-        if (key_state[i] == KEY_STATE_RELEASE)
-        {
-            key_release_callback(keycode_hash[i]);
-            key_state[i] = KEY_STATE_EMPTY;
-            sti();
-            return true;
-        }
+        switch (query_key(i))
+		{
+		case KEY_STATE_PRESS:
+			key_press_callback(get_keycode(i));
+			release_key(i);
+			sti();
+			return true;
+		case KEY_STATE_RELEASE:
+			key_release_callback(get_keycode(i));
+			clear_key(i);
+			sti();
+			return true;
+		default:
+			break;
+		}
     }
     sti();
     return false;
