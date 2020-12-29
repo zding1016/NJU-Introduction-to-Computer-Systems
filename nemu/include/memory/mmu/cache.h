@@ -2,6 +2,7 @@
 #define __CACHE_H__
 
 #include "nemu.h"
+
 #ifdef CACHE_ENABLED
 
 // init the cache
