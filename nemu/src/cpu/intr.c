@@ -24,9 +24,9 @@ void raise_intr(uint8_t intr_no)
         if (cpu.cs.rpl > GDTi.privilege_level) {
             assert(0);
         }
-        push_(cpu.eflags.val, 32);
-        push_(cpu.cs.val, 32);
-        push_(cpu.eip, 32);
+        push_help(cpu.eflags.val, 32);
+        push_help(cpu.cs.val, 32);
+        push_help(cpu.eip, 32);
         if (IDTi.type == 14) cpu.eflags.IF = 0;
         cpu.cs.val = IDTi.selector;
         load_sreg(1);
