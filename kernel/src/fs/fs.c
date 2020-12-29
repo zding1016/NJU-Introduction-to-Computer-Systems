@@ -63,7 +63,7 @@ size_t fs_read(int fd, void *buf, size_t len)
 	if (files[fd].offset+len-1 >= file_table[files[fd].index].size) {
 	    real_len = file_table[files[fd].index].size-files[fd].offset;
 	}
-	ide_read(buf, file_table[files[fd].index].disk_offset+files[fd].offset, l);
+	ide_read(buf, file_table[files[fd].index].disk_offset+files[fd].offset, real_len);
 	files[fd].offset += real_len;
 	memset(buf + real_len, 0, len-real_len);
 	assert(files[fd].offset <= file_table[files[fd].index].size);
