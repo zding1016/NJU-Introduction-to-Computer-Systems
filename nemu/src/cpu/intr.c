@@ -2,37 +2,36 @@
 #include "cpu/instr.h"
 #include "memory/memory.h"
 
-void push_eflags(){
-	cpu.esp-=4;
-	vaddr_write(cpu.esp,SREG_SS,4,cpu.eflags.val);
-}
-void push_cs(){
-	cpu.esp-=4;
-	vaddr_write(cpu.esp,SREG_SS,4,(cpu.cs.val&0x0000ffff));
-}
-void push_eip(){
-	cpu.esp-=4;
-	vaddr_write(cpu.esp,SREG_SS,4,cpu.eip);
-}
-
 void raise_intr(uint8_t intr_no)
 {
 #ifdef IA32_INTR
 	/*printf("Please implement raise_intr()");
 	fflush(stdout);
 	assert(0);*/
-	push_eflags();
-	push_cs();
-	push_eip();
-	//set flag
-	GateDesc gate;
-	gate.val[0]=laddr_read((cpu.idtr.base+intr_no*8),4);
-	gate.val[1]=laddr_read(((cpu.idtr.base+intr_no*8)+4),4);
-	cpu.eip=gate.offset_15_0|(gate.offset_31_16<<16);
-	cpu.cs.val=gate.selector;
-	if(gate.type==0xe){
-		cpu.eflags.IF=0;
-	}
+	GateDesc IDTi;
+    IDTi.val[0] = laddr_read(cpu.idtr.base+(intr_no << 3), 4);
+    IDTi.val[1] = laddr_read(cpu.idtr.base+(intr_no << 3)+4, 4);
+    assert(IDTi.present == 1);
+    SegDesc GDTi;
+    GDTi.val[0] = laddr_read(cpu.gdtr.base+((IDTi.selector >> 3) << 3), 4);
+    GDTi.val[1] = laddr_read(cpu.gdtr.base+((IDTi.selector >> 3) << 3)+4, 4);
+    assert(GDTi.present == 1);
+    if (cpu.cs.rpl < GDTi.privilege_level) {
+        assert(0);
+    } else if (cpu.cs.rpl > IDTi.privilege_level) {
+        assert(0);
+    } else {
+        if (cpu.cs.rpl > GDTi.privilege_level) {
+            assert(0);
+        }
+        push_(cpu.eflags.val, 32);
+        push_(cpu.cs.val, 32);
+        push_(cpu.eip, 32);
+        if (IDTi.type == 14) cpu.eflags.IF = 0;
+        cpu.cs.val = IDTi.selector;
+        load_sreg(1);
+        cpu.eip = (IDTi.offset_31_16 << 16)+IDTi.offset_15_0;
+    }
 #endif
 }
 
