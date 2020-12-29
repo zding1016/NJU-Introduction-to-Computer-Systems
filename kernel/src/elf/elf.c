@@ -42,18 +42,16 @@ uint32_t loader()
 
 			/* copy the segment from the ELF file to its proper memory area */
 #ifdef IA32_PAGE
-			uint32_t paddr = mm_malloc(ph->p_vaddr, ph->p_memsz);
+            uint32_t paddr = mm_malloc(ph->p_vaddr, ph->p_memsz);
+#else
+            uint32_t paddr = ph->p_vaddr;
+#endif
 #ifdef HAS_DEVICE_IDE
-			ide_read((uint8_t *)paddr, (uint32_t)ph->p_offset, ph->p_filesz);
+            ide_read((void *)paddr, ph->p_offset, ph->p_filesz);
 #else
-			memcpy((void *)paddr, (void *)ph->p_offset, ph->p_filesz);
+            memcpy((void *)paddr, (void *)elf+ph->p_offset, ph->p_filesz);
 #endif
-			memset((void *)(paddr + ph->p_filesz), 0, ph->p_memsz - ph->p_filesz);
-#else
-			memcpy((void *)ph->p_vaddr, (void *)ph->p_offset, ph->p_filesz);
-			memset((void *)(ph->p_vaddr + ph->p_filesz), 0, ph->p_memsz - ph->p_filesz);
-#endif
-
+            memset((void *)paddr+ph->p_filesz, 0, ph->p_memsz-ph->p_filesz);
 #ifdef IA32_PAGE
 			/* Record the program break for future use */
 			extern uint32_t brk;
