@@ -2,14 +2,16 @@
 /*
 Put the implementations of `iret' instructions here.
 */
-make_instr_func(iret)
-{
-    print_asm_0("iret", "", 1);
-	cpu.eip=vaddr_read(cpu.esp,2,4);
-	cpu.esp=cpu.esp+4;
-	cpu.cs.val=(uint16_t)vaddr_read(cpu.esp,2,4);
-	cpu.esp+=4;
-	cpu.eflags.val=vaddr_read(cpu.esp,2,4);
-	cpu.esp+=4;
-	return 0;
+make_instr_func(iret) {
+#ifdef IA32_INTR
+    int cpl = cpu.cs.rpl;
+    cpu.eip = pop_(32);
+    cpu.cs.val = pop_(32);
+    load_sreg(1);
+    cpu.eflags.val = pop_(32);
+    if (cpl != cpu.cs.rpl) {
+        assert(0);
+    }
+#endif
+    return 0;
 }

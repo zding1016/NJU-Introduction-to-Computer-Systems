@@ -2,17 +2,19 @@
 /*
 Put the implementations of `lgdt' instructions here.
 */
-make_instr_func(lgdt){
-    opr_src.data_size = 16;   //16
-    opr_dest.data_size = 32;  //32
+make_instr_func(lgdt) {
     int len = 1;
-    len += modrm_rm(eip + 1, &opr_src);
-    opr_dest.type = opr_src.type;
-    opr_dest.addr = opr_src.addr + 2;
-    operand_read(&opr_src);
-    operand_read(&opr_dest);
-    print_asm_1("lgdt", "", 6, &opr_src);
-    cpu.gdtr.limit = opr_src.val;
-    cpu.gdtr.base = data_size == 16 ? opr_dest.val & 0xffffff : opr_dest.val;
+#ifdef IA32_SEG
+    OPERAND rm;
+    rm.data_size = 16;
+    rm.sreg = SREG_DS;
+    len += modrm_rm(eip+1, &rm);
+    operand_read(&rm);
+    cpu.gdtr.limit = rm.val & 0x0000FFFF;
+    rm.data_size = 32;
+    rm.addr += 2;
+    operand_read(&rm);
+    cpu.gdtr.base = rm.val & (data_size == 16 ? 0x00FFFFFF : 0xFFFFFFFF);
+#endif
     return len;
 }

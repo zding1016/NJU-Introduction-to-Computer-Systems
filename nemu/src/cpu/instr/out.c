@@ -1,22 +1,16 @@
 #include "cpu/instr.h"
 #include "device/port_io.h"
-#define AL cpu.gpr[0]._8[0]
-#define AX cpu.gpr[0]._16
-#define DX cpu.gpr[2]._16
 /*
 Put the implementations of `out' instructions here.
 */
-make_instr_func(out_b)
-{
-    pio_write(DX, 1, AL);
-    return 1;
+make_instr_func(out_b) {
+    int len = 1;
+    pio_write(cpu.gpr[2]._16, 1, cpu.gpr[0]._8[0]);
+    return len;
 }
 
-make_instr_func(out_v)
-{
-    if (data_size == 16)
-        pio_write(DX, 2, AX);
-    else
-        pio_write(DX, 4, cpu.eax);
-    return 1;
+make_instr_func(out_v) {
+    int len = 1;
+    pio_write(cpu.gpr[2]._16, data_size >> 3, cpu.eax & (0xFFFFFFFF >> (32-data_size)));
+    return len;
 }
