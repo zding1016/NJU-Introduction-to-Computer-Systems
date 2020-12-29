@@ -36,7 +36,7 @@ instr_func opcode_entry[256] = {
     /* 0x80 - 0x83*/ group_1_b, group_1_v, nemu_trap, group_1_bv,
     /* 0x84 - 0x87*/ test_r2rm_b, test_r2rm_v, inv, inv,
     /* 0x88 - 0x8b*/ mov_r2rm_b, mov_r2rm_v, mov_rm2r_b, mov_rm2r_v,
-    /* 0x8c - 0x8f*/ inv, lea, mov_rm2s_w, inv,
+    /* 0x8c - 0x8f*/ inv, lea_rm2r_v, mov_rm2s_w, inv,
     /* 0x90 - 0x93*/ nop, inv, inv, inv,
     /* 0x94 - 0x97*/ inv, inv, inv, inv,
     /* 0x98 - 0x9b*/ cbw_a_v, cltd, inv, inv,
@@ -57,7 +57,7 @@ instr_func opcode_entry[256] = {
     /* 0xd4 - 0xd7*/ inv, inv, inv, inv,
     /* 0xd8 - 0xdb*/ group_x87_d8, group_x87_d9, group_x87_da, group_x87_db,
     /* 0xdc - 0xdf*/ group_x87_dc, group_x87_dd, group_x87_de, group_x87_df,
-    /* 0xe0 - 0xe3*/ inv, inv, inv, jecxz_short_,
+    /* 0xe0 - 0xe3*/ inv, inv, inv, inv,
     /* 0xe4 - 0xe7*/ inv, inv, inv, inv,
     /* 0xe8 - 0xeb*/ call_near, jmp_near, jmp_far_imm, jmp_short,
     /* 0xec - 0xef*/ in_b, in_v, out_b, out_v,
@@ -97,11 +97,11 @@ instr_func group_2_1v_entry[8] =
 
 /* 0xd2 */
 instr_func group_2_cb_entry[8] =
-    {inv, inv, inv, inv, shl_c2rm_b, shr_c2rm_b, inv, sar_c2rm_b};
+    {inv, inv, inv, inv, shl_c2rm_b, inv, shr_c2rm_b, sar_c2rm_b};
 
 /* 0xd3 */
 instr_func group_2_cv_entry[8] =
-    {inv, inv, inv, inv, shl_c2rm_bv, shr_c2rm_bv, inv, sar_c2rm_bv};
+    {inv, inv, inv, inv, shl_c2rm_bv, inv, shr_c2rm_bv, sar_c2rm_bv};
 
 /* 0xf6 */
 instr_func group_3_b_entry[8] =
@@ -132,7 +132,7 @@ instr_func group_x87_da_entry[8] =
 
 /* 0xdb */
 instr_func group_x87_db_entry[8] =
-    {x87_fildl, inv, inv, x87_fistpl, inv, x87_fucomi, inv, inv};
+    {x87_fildl, inv, inv, x87_fistpl, inv, x87_fucomi, x87_fcomi, inv};
 
 /* 0xdc */
 instr_func group_x87_dc_entry[8] =
@@ -149,10 +149,6 @@ instr_func group_x87_de_entry[8] =
 /* 0xdf */
 instr_func group_x87_df_entry[8] =
     {inv, inv, inv, inv, x87_fnstsw, x87_fucomip, x87_fcomip, inv};
-
-/* 0x.. */
-// instr_func group_5_indirect_entry[8] =
-// {inv, inv, inv, inv, inv, inv, inv, inv};
 
 instr_func opcode_2_byte_entry[256] = {
     /* 0x00 - 0x03*/ inv, group_7, inv, inv,
