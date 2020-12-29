@@ -11,6 +11,7 @@
 #define STACK_SIZE (1 << 20)
 
 void ide_read(uint8_t *, uint32_t, uint32_t);
+void ide_write(uint8_t *buf, uint32_t offset, uint32_t len);
 void create_video_mapping();
 uint32_t get_ucr3();
 
@@ -39,8 +40,7 @@ uint32_t loader()
 
 			// remove this panic!!!
 			//panic("Please implement the loader");
-
-			/* copy the segment from the ELF file to its proper memory area */
+/* TODO: copy the segment from the ELF file to its proper memory area */
 #ifdef IA32_PAGE
             uint32_t paddr = mm_malloc(ph->p_vaddr, ph->p_memsz);
 #else
@@ -51,6 +51,7 @@ uint32_t loader()
 #else
             memcpy((void *)paddr, (void *)elf+ph->p_offset, ph->p_filesz);
 #endif
+/* TODO: zeror the memory area [vaddr + file_sz, vaddr + mem_sz) */
             memset((void *)paddr+ph->p_filesz, 0, ph->p_memsz-ph->p_filesz);
 #ifdef IA32_PAGE
 			/* Record the program break for future use */

@@ -23,8 +23,8 @@ uint32_t paddr_read(paddr_t paddr, size_t len)
 {
 	uint32_t ret = 0;
 #ifdef HAS_DEVICE_VGA
-	int flag = is_mmio(paddr);
-	if (~flag) return mmio_read(paddr, len, flag);
+	int map_NO = is_mmio(paddr);
+	if (~map_NO) return mmio_read(paddr, len, map_NO);
 #endif
 #ifdef CACHE_ENABLED
     ret = cache_read(paddr, len);
@@ -37,8 +37,8 @@ uint32_t paddr_read(paddr_t paddr, size_t len)
 void paddr_write(paddr_t paddr, size_t len, uint32_t data)
 {
 #ifdef HAS_DEVICE_VGA
-    int flag = is_mmio(paddr);
-    if (~flag) mmio_write(paddr, len, data, flag);
+    int map_NO = is_mmio(paddr);
+    if (~map_NO) mmio_write(paddr, len, data, map_NO);
 #endif
 #ifdef CACHE_ENABLED
     cache_write(paddr, len, data);
@@ -49,75 +49,55 @@ void paddr_write(paddr_t paddr, size_t len, uint32_t data)
 
 uint32_t laddr_read(laddr_t laddr, size_t len)
 {
-    assert(len==1||len==2||len==4);
-	if(cpu.cr0.pg!=1||cpu.cr0.pe!=1)
-	{
-	    
-	    return paddr_read(laddr,len);
-	}else
-	{
-	    if((laddr&0xfff)+len-1>0xfff)//跨页
-	    {
-	        uint32_t ret1;
-	        uint32_t ret2;
-	        uint32_t l=(0xfff-(laddr&0xfff));
-	        ret1=paddr_read(page_translate(laddr),l);
-	        ret2=paddr_read(page_translate(laddr+l),len-l);
-	        return ret1+(ret2<<(8*l));
-	    }
-	    
-	    paddr_t paddr=page_translate(laddr);
-	    return paddr_read(paddr,len);
-	}
+#ifdef IA32_PAGE
+    if (cpu.cr0.pg) {
+        uint32_t offset = laddr & 0x00000FFF;
+        if (offset+len-1 > 0x00000FFF) {
+            int len1 = 0x00000FFF-offset+1;
+            return (laddr_read(laddr+len1, len-len1) << (len1 << 3)) | laddr_read(laddr, len1);
+        } else {
+            laddr = page_translate(laddr);
+            return paddr_read(laddr, len);
+        }
+    } else
+#endif
+	return paddr_read(laddr, len);
 }
 
 void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 {
-    assert(len==1||len==2||len==4);
-    if(cpu.cr0.pg!=1||cpu.cr0.pe!=1)
-	{
-	    paddr_write(laddr, len, data);
-	}
-	else
-	{
-	    if((laddr&0xfff)+len-1>0xfff)//跨页
-	    {
-	        uint32_t l=(0xfff-(laddr&0xfff));
-	        paddr_write(page_translate(laddr),l,data);
-	        paddr_write(page_translate(laddr+l),len-l,data>>(8*l));
-	        return;
-	    }
-	    paddr_t paddr=page_translate(laddr);
-	    paddr_write(paddr,len,data);
-	}
+#ifdef IA32_PAGE
+    if (cpu.cr0.pg) {
+        uint32_t offset = laddr & 0x00000FFF;
+        if (offset+len-1 > 0x00000FFF) {
+            int len1 = 0x00000FFF-offset+1;
+            laddr_write(laddr, len1, data & (0xFFFFFFFF >> (32-(len1 << 3))));
+            laddr_write(laddr+len1, len-len1, data >> (len1 << 3));
+        } else {
+            laddr = page_translate(laddr);
+            paddr_write(laddr, len, data);
+        }
+    } else
+#endif
+	paddr_write(laddr, len, data);
 }
 
 uint32_t vaddr_read(vaddr_t vaddr, uint8_t sreg, size_t len)
 {
 	assert(len == 1 || len == 2 || len == 4);
-#ifndef IA32_SEG
-	return laddr_read(vaddr, len);
-#else
-    uint32_t laddr = vaddr;
-    if (cpu.cr0.pe){
-        laddr = segment_translate(vaddr, sreg);
-    }
-    return laddr_read(laddr, len);
+#ifdef IA32_SEG
+    if (cpu.cr0.pe) vaddr = segment_translate(vaddr, sreg);
 #endif
+	return laddr_read(vaddr, len);
 }
 
 void vaddr_write(vaddr_t vaddr, uint8_t sreg, size_t len, uint32_t data)
 {
 	assert(len == 1 || len == 2 || len == 4);
-#ifndef IA32_SEG
-	laddr_write(vaddr, len, data);
-#else
-    uint32_t laddr = vaddr;
-    if (cpu.cr0.pe){
-        laddr = segment_translate(vaddr, sreg);
-    }
-    return laddr_write(laddr, len, data);
+#ifdef IA32_SEG
+    if (cpu.cr0.pe) vaddr = segment_translate(vaddr, sreg);
 #endif
+	laddr_write(vaddr, len, data);
 }
 
 void init_mem()
@@ -127,7 +107,6 @@ void init_mem()
 #ifdef CACHE_ENABLED
     init_cache();
 #endif
-
 #ifdef TLB_ENABLED
 	make_all_tlb();
 	init_all_tlb();
