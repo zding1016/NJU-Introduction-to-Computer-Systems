@@ -276,7 +276,6 @@ VOID
    buf = (LPBYTE)UTIL_calloc(1, 320 * 200 * 2);
    buf2 = (LPBYTE)(buf + 320 * 200);
    lpSpriteCrane = (LPSPRITE)buf2 + 32000;
-
    //
    // Create the surfaces
    //
@@ -286,7 +285,6 @@ VOID
    lpBitmapUp = SDL_CreateRGBSurface(gpScreen->flags, 320, 200, 8,
                                      gpScreen->format->Rmask, gpScreen->format->Gmask, gpScreen->format->Bmask,
                                      gpScreen->format->Amask);
-
 #if SDL_VERSION_ATLEAST(2, 0, 0)
    SDL_SetSurfacePalette(lpBitmapDown, gpScreen->format->palette);
    SDL_SetSurfacePalette(lpBitmapUp, gpScreen->format->palette);
@@ -294,7 +292,6 @@ VOID
    SDL_SetPalette(lpBitmapDown, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
    SDL_SetPalette(lpBitmapUp, SDL_LOGPAL | SDL_PHYSPAL, VIDEO_GetPalette(), 0, 256);
 #endif
-
    //
    // Read the bitmaps
    //
@@ -313,7 +310,6 @@ VOID
    iTitleHeight = PAL_RLEGetHeight(lpBitmapTitle);
    lpBitmapTitle[2] = 0;
    lpBitmapTitle[3] = 0; // HACKHACK
-
    //
    // Generate the positions of the cranes
    //
@@ -323,7 +319,6 @@ VOID
       cranepos[i][1] = RandomLong(0, 80);
       cranepos[i][2] = RandomLong(0, 8);
    }
-
    //
    // Play the title music
    //
@@ -332,7 +327,6 @@ VOID
       fUseCD = FALSE;
       PAL_PlayMUS(NUM_RIX_TITLE, TRUE, 2);
    }
-
    //
    // Clear all of the events and key states
    //
@@ -495,7 +489,6 @@ VOID
    SDL_FreeSurface(lpBitmapDown);
    SDL_FreeSurface(lpBitmapUp);
    free(buf);
-
    if (!fUseCD)
    {
       PAL_PlayMUS(0, FALSE, 1);

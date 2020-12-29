@@ -14,27 +14,26 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect,
 
 	int sx = (srcrect == NULL ? 0 : srcrect->x);
 	int sy = (srcrect == NULL ? 0 : srcrect->y);
-	int dx = (dstrect == NULL ? 0 : dstrect->x);
-	int dy = (dstrect == NULL ? 0 : dstrect->y);
-	int w = (srcrect == NULL ? src->w : srcrect->w);
-	int h = (srcrect == NULL ? src->h : srcrect->h);
-	if(dst->w - dx < w) { w = dst->w - dx; }
-	if(dst->h - dy < h) { h = dst->h - dy; }
-	if(dstrect != NULL) {
-		dstrect->w = w;
-		dstrect->h = h;
-	}
-
+    int dx = (dstrect == NULL ? 0 : dstrect->x);
+    int dy = (dstrect == NULL ? 0 : dstrect->y);
+    int w = (srcrect == NULL ? src->w : srcrect->w);
+    int h = (srcrect == NULL ? src->h : srcrect->h);
+    if(dst->w - dx < w) { w = dst->w - dx; }
+    if(dst->h - dy < h) { h = dst->h - dy; }
+    if(dstrect != NULL) {
+    	dstrect->w = w;
+    	dstrect->h = h;
+    }
 	/* TODO: copy pixels from position (`sx', `sy') with size
 	 * `w' X `h' of `src' surface to position (`dx', `dy') of
 	 * `dst' surface.
 	 */
-
     for (int j = 0; j < h; ++j) {
         for (int i = 0; i < w; ++i) {
             dst->pixels[dx+i+(dy+j)*dst->w] = src->pixels[sx+i+(sy+j)*src->w];
         }
     }
+	//assert(0);
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color)
@@ -46,7 +45,6 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color)
 	 * in surface `dst' with color `color'. If dstrect is
 	 * NULL, fill the whole surface.
 	 */
-
     int dx = (dstrect == NULL ? 0 : dstrect->x);
     int dy = (dstrect == NULL ? 0 : dstrect->y);
     int w = (dstrect == NULL ? dst->w : dstrect->w);
@@ -91,12 +89,11 @@ void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors,
 	/* Set the new palette. */
 	s->format->palette->ncolors = ncolors;
 	memcpy(s->format->palette->colors, colors, sizeof(SDL_Color) * ncolors);
-
 	if (s->flags & SDL_HWSURFACE)
 	{
 		/* TODO: Set the VGA palette by calling write_palette(). */
-		//assert(0);
 		write_palette(s->format->palette->colors, s->format->palette->ncolors);
+		//assert(0);
 	}
 }
 
