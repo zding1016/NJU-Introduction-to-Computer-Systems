@@ -44,6 +44,7 @@ int fs_open(const char *pathname, int flags)
         {
             files[i + 3].used = true;
             files[i + 3].offset = 0;
+            files[i + 3].index = i;
             //Log("file \"%s\" opend",pathname);
             return i + 3;
         }
@@ -57,19 +58,16 @@ size_t fs_read(int fd, void *buf, size_t len)
 	assert(fd > 2);
     assert(files[fd].used);
     //panic("Please implement fs_read at fs.c");
-    uint32_t real_len = len;
-    //Log("Read from %s:%x %x bytes",file_table[fd-3].name,files[fd].offset,len);
-    if (files[fd].offset + len > file_table[fd - 3].size)
-        real_len = file_table[fd - 3].size - files[fd].offset;
-    if (real_len == 0)
-        return 0;
-    if (files[fd].offset >= file_table[fd - 3].size)
-        return 0;
-    memset(buf + real_len, 0, len - real_len);
-    ide_read(buf, file_table[fd - 3].disk_offset + files[fd].offset, real_len);
-    files[fd].offset += real_len;
-    //Log("offset of %s is %x,return %x",file_table[fd-3].name,files[fd].offset,real_len);
-    return real_len;
+    assert(files[fd].offset <= file_table[files[fd].index].size);
+	size_t real_len = len;
+	if (files[fd].offset+len-1 >= file_table[files[fd].index].size) {
+	    real_len = file_table[files[fd].index].size-files[fd].offset;
+	}
+	ide_read(buf, file_table[files[fd].index].disk_offset+files[fd].offset, l);
+	files[fd].offset += real_len;
+	memset(buf + real_len, 0, len-real_len);
+	assert(files[fd].offset <= file_table[files[fd].index].size);
+	return real_len;
 }
 
 size_t fs_write(int fd, void *buf, size_t len)
@@ -94,6 +92,7 @@ size_t fs_write(int fd, void *buf, size_t len)
 off_t fs_lseek(int fd, off_t offset, int whence)
 {
 	//panic("Please implement fs_lseek at fs.c");
+	assert(files[fd].used);
     switch (whence)
     {
     case SEEK_SET:
@@ -103,17 +102,18 @@ off_t fs_lseek(int fd, off_t offset, int whence)
         files[fd].offset += offset;
         break;
     case SEEK_END:
-        files[fd].offset = file_table[fd - 3].size + offset;
+        files[fd].offset = file_table[files[fd].index].size + offset;
         break;
     }
+    assert(files[fd].offset <= file_table[files[fd].index].size);
     return files[fd].offset;
 }
 
 int fs_close(int fd)
 {
 	//panic("Please implement fs_close at fs.c");
-    assert(fd < NR_FILES + 3);
-	files[fd].used = false;
-	files[fd].offset = 0;
-	return 0;
+    if (0 <= fd && fd < NR_FILES + 3 && files[fd].used) {
+	    files[fd].used = 0;
+	    return 0;
+	} else return -1;
 }
