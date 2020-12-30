@@ -2,7 +2,6 @@
 #include "monitor/ui.h"
 #include "monitor/breakpoint.h"
 #include "cpu/cpu.h"
-#include "memory/memory.h"
 
 #include <stdlib.h>
 #include <readline/readline.h>
@@ -128,7 +127,6 @@ cmd_handler(cmd_b)
 	if (*args == '*')
 	{
 		args++;
-		//printf("%s\n",args);
 		addr = expr(args, &success);
 		if (!success)
 		{
@@ -176,49 +174,6 @@ cmd_handler(cmd_w)
 	}
 
 	printf("set watchpoint %d\n", NO);
-	return 0;
-}
-
-cmd_handler(cmd_x)
-{
-    if (args == NULL)
-    {
-        goto x_error;
-    }
-    
-    char *num_str = strtok(NULL, " ");
-    char *addr_str = strtok(NULL, " ");
-    if (num_str == NULL || addr_str == NULL)
-    {
-        goto x_error;
-    }
-    bool success;
-    uint32_t num = expr(num_str, &success);
-    paddr_t addr = expr(addr_str, &success);
-    printf("n = %d, expr = 0x%x\n", num, addr);
-    if (!success)
-    {
-        printf("invalid expression: '%s'\n", args);
-    }
-    else
-    {
-        int list = 0;
-        printf("0x%08x:\t",addr);
-        for (int i = 0; i < 4 * num; i += 4) {
-            printf("0x%08x", vaddr_read(addr + i, SREG_CS, 4));
-            printf("\t");
-            list = (list + 1) % 4;
-            if (i == 4 * (num - 1)){
-                printf("\n");
-                break;
-            }
-            if (list == 0) printf("\n0x%08x:\t", addr + i);
-        }
-    }
-    return 0;
-    
-x_error:
-	puts("Command format: \"x N EXPR\"");
 	return 0;
 }
 
@@ -274,7 +229,7 @@ static struct
 	{"w", "Set watchpoint", cmd_w},
 	{"d", "Delete breakpoint(s).", cmd_d},
 	{"exit", "Exit NEMU", cmd_q},
-    {"x", "Know value in a certain address", cmd_x},
+
 	/* TODO: Add more commands */
 	{"si", "Single Step Execution", cmd_si},
 	{"info", "Print register and watch point info", cmd_info},

@@ -1,6 +1,5 @@
 #include "nemu.h"
 #include "cpu/reg.h"
-#include "cpu/cpu.h"
 #include "memory/memory.h"
 
 #include <stdlib.h>
@@ -10,26 +9,20 @@
  */
 #include <sys/types.h>
 #include <regex.h>
-uint32_t look_up_symtab(char *sym, bool *success);
-uint32_t eval(int s, int e, bool *success);
-static bool check_parentheses(int s, int e);
+
 enum
 {
 	NOTYPE = 256,
 	EQ,
+	NEQ,
+	AND,
+	OR,
+	NOT,
+	HEX,
 	NUM,
 	REG,
-	SYMB,
-	HEX,
-	NEG,
 	DEREF,
-	LS,
-	RS,
-	LE,
-	GE,
-	NE,
-	AND,
-	OR
+	SYMB
 
 	/* TODO: Add more token types */
 
@@ -46,66 +39,24 @@ static struct rule
 	 */
 
 	{" +", NOTYPE}, // white space
-	{"0[xX][0-9a-fA-F]+", HEX},
-	{"[0-9]{1,10}", NUM},     
-	{"\\$e[a-d]x", REG},
-	{"\\$e[sb]p", REG},
-	{"\\$e[ds]i", REG},
-	{"[a-zA-z]+[a-zA-z0-9_]*", SYMB},
-	{"!=", NE},
-	{"==", EQ},
-	{"\\*",'*'},
-	{"/",'/'},
-	{"\\(",'('},
-	{"\\)",')'},
-	{"<<",LS},
-	{">>",RS},
-	{">=",GE},
-	{"<=",LE},
-	{"<",'<'},
-	{">",'>'},
 	{"\\+", '+'},
 	{"\\-", '-'},
-	{"%",'%'},
+	{"\\*", '*'},
+	{"/", '/'},
+	{"\\(", '('},
+	{"\\)", ')'},
+	{"0x[0-9a-fA-F]+", HEX},
+	{"[0-9]+", NUM},
+	{"\\$[a-zA-Z0-9]+", REG},
+	{"==", EQ},
+	{"\\!=", NEQ},
 	{"&&", AND},
 	{"\\|\\|", OR},
-	{"\\^",'^'},
-	{"&",'&'},
-	{"|",'|'},
-	{"!",'!'},
-	{"~",'~'},
-};
-
-static struct Priority{
-    int operand;
-    int num;
-} value_pri[] ={
-  {DEREF, 13},
-  {'~', 13},
-  {NEG, 13},
-  {'!', 13},
-  {'*', 12},
-  {'/', 12},
-  {'%', 12},
-  {'+', 11},
-  {'-', 11},
-  {LS, 10},
-  {RS, 10},
-  {GE, 9},
-  {LE, 9},
-  {'>', 9},
-  {'<', 9},
-  {EQ, 8},
-  {NE, 8},
-  {'&',7},
-  {'^',6},
-  {'|',5},
-  {AND,4},
-  {OR,3},
+	{"!", NOT},
+	{"[a-zA-Z0-9\\_]+", SYMB}
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
-#define NR_VALUE (sizeof(value_pri) / sizeof(value_pri[0]))
 
 static regex_t re[NR_REGEX];
 
@@ -162,21 +113,13 @@ static bool make_token(char *e)
 				/* TODO: Now a new token is recognized with rules[i]. 
 				 * Add codes to perform some actions with this token.
 				 */
-
-				int k;
+                
 				switch (rules[i].token_type)
 				{
-				case NOTYPE:break;
-				case REG:
-				case NUM:
-				case HEX:
-				case SYMB:
-				    for (k = 0; k < substr_len; k++) {
-				        tokens[nr_token].str[k] = substr_start[k];
-				    }
-				    tokens[nr_token].str[k] = '\0';
+				case NOTYPE: break;
 				default:
 					tokens[nr_token].type = rules[i].token_type;
+                    sprintf(tokens[nr_token].str, "%.*s", substr_len, substr_start);
 					nr_token++;
 				}
 
@@ -194,118 +137,105 @@ static bool make_token(char *e)
 	return true;
 }
 
-static bool IsCertainType(int get_int) 
-{
-    return (get_int != NOTYPE && get_int != NUM && get_int != REG && get_int !=SYMB && get_int != ')' && get_int != HEX);
+bool is_operator(int type) {
+    return type != NUM && type != HEX && type != REG && type != '(' && type != ')';
 }
 
-static bool check_parentheses(int s, int e){
-    int num = 0;
-    for (int i = s; i <= e; i++) {
-        if (tokens[i].type == '(') num++;
-        else if (tokens[i].type == ')') num--;
-        if (num == 0 && i != e) return 0;
+int get_priority(int type) {
+    switch (type) {
+        case '+': return 4;
+        case '-': return 4;
+        case '*': return 5;
+        case '/': return 5;
+        case EQ: return 3;
+	    case NEQ: return 3;
+	    case AND: return 2;
+	    case OR: return 1;
+	    case NOT: return 6;
+	    case DEREF: return 7;
+	    default: return 256;
     }
-    if (num == 0 && tokens[s].type == '(' && tokens[e].type == ')')
-        return true;
-    else
-        return false;
 }
 
-uint32_t eval(int s, int e, bool *success)
-{
-    if (s > e){
+bool check_parentheses(int p, int q) {
+    int top = 0;
+    if (tokens[p].type != '(' || tokens[q].type != ')') return 0;
+    for (int i = p; i <= q; ++i) {
+        if (tokens[i].type == '(') top++;
+        else if (tokens[i].type == ')') top--;
+        if (top < 0) return 0;
+    }
+    return !top;
+}
+
+extern uint32_t look_up_symtab(char *sym, bool *success);
+
+uint32_t eval(int p, int q, bool *success) {
+    if (p > q) {
         *success = false;
         return 0;
-    }
-    else if (s == e){
-        if (tokens[s].type == NUM){
-            uint32_t ans = 0;
-            sscanf(tokens[s].str, "%d", &ans);
-            return ans;
-        }
-        else if (tokens[s].type == REG){
-            if (!strcmp(tokens[s].str, "$eax")) return cpu.eax;
-            else if (!strcmp(tokens[s].str, "$ecx")) return cpu.ecx;
-            else if (!strcmp(tokens[s].str, "$edx")) return cpu.edx;
-            else if (!strcmp(tokens[s].str, "$ebx")) return cpu.ebx;
-            else if (!strcmp(tokens[s].str, "$esp")) return cpu.esp;
-            else if (!strcmp(tokens[s].str, "$ebp")) return cpu.ebp;
-            else if (!strcmp(tokens[s].str, "$esi")) return cpu.esi;
-            else if (!strcmp(tokens[s].str, "$edi")) return cpu.edi;
-        }
-        else if (tokens[s].type == HEX){
-            uint32_t ans = 0;
-            sscanf(tokens[s].str, "%x", &ans);
-            return ans;
-        }
-        else {
-            return look_up_symtab(tokens[s].str, success);
-        }
-    }
-    else if (check_parentheses(s, e)){
-        return eval(s + 1, e - 1, success);
-    }
-    else {
-        int op = -1;
-        int min_of_pri = 100;
-        for (int i = s; i <= e; i++){
-            if (tokens[i].type == '('){
-                int num = 1;
-                i++;
-                while (num && i <= e) {
-                    if (tokens[i].type == '(')
-                        num++;
-                    else if (tokens[i].type == ')')
-                        num--;
-                    i++;
-                }
+    } else if (p == q) {
+        uint32_t x = 0;
+        switch (tokens[p].type) {
+            case NUM: {
+                sscanf(tokens[p].str, "%u", &x);
+                break;
             }
-            if (IsCertainType(i)){
-                int j = 0;
-                int flag = 0;
-                for (j = 0; j < NR_VALUE; j++){
-                    if (value_pri[j].operand == tokens[i].type) {
-                        flag = 1; break;
-                    }
-                }
-                if (flag && value_pri[j].num <= min_of_pri){
-                    min_of_pri = value_pri[j].num;
-                    op = i;
+            case HEX: {
+                sscanf(tokens[p].str, "%x", &x);
+                break;
+            }
+            case REG: {
+                x = get_reg_val(tokens[p].str+1, success);
+                break;
+            }
+            case SYMB: {
+                x = look_up_symtab(tokens[p].str, success);
+                break;
+            }
+            default: *success = false;
+        }
+        return x;
+    } else if (check_parentheses(p, q)) {
+        return eval(p+1, q-1, success);
+    } else {
+        int dominant = NOTYPE, k = 0, level = 0;
+        for (int i = p; i <= q; ++i) {
+            if (tokens[i].type == '(') level++;
+            else if (tokens[i].type == ')') level--;
+            else if (!level && is_operator(tokens[i].type)) {
+                if (get_priority(tokens[i].type) <= get_priority(dominant)) {
+                    dominant = tokens[i].type;
+                    k = i;
                 }
             }
         }
-        uint32_t val1 = 0, val2 = 0;
-        int op_type = tokens[op].type;
-        if (op_type != '~' && op_type != '!' && op_type != DEREF && op_type != NEG)
-            val1 = eval(s, op - 1, success);
-        val2 = eval(op + 1, e, success);
-        switch(op_type) {
-            case '+': return val1 + val2; break;
-            case '-': return val1 - val2; break;
-            case '*': return val1 * val2; break;
-            case '/': return val1 / val2; break;
-            case LS: return val1 << val2; break;
-            case RS: return val1 >> val2; break;
-            case NE: return val1 != val2; break;
-            case EQ: return val1 == val2; break;
-            case '<': return val1 < val2; break;
-            case '>': return val1 > val2; break;
-            case LE: return val1 <= val2; break;
-            case GE: return val1 >= val2; break;
-            case '!': return !val2; break;
-            case '~': return ~val2; break;
-            case NEG: return -val2; break;
-            case '^': return val1 ^ val2; break;
-            case AND: return val1 && val2; break;
-            case OR: return val1 || val2; break;
-            case '&': return val1 & val2; break;
-            case '|': return (val1 | val2); break;
-            case DEREF: return *(hw_mem+val2); break;
-            default: assert(0);
+        if (dominant == NOTYPE) {
+            *success = false;
+            return 0;
+        }
+        uint32_t y = eval(k+1, q, success);
+        if (k == p) {
+            if (!(*success)) return 0;
+            if (dominant == '+') return y;
+            if (dominant == '-') return -y;
+            if (dominant == NOT) return !y;
+            if (dominant == DEREF) return vaddr_read(y, SREG_CS, 4);
+        }
+        uint32_t x = eval(p, k-1, success);
+        if (!(*success)) return 0;
+        switch (dominant) {
+	        case '+': return x+y;
+            case '-': return x-y;
+            case '*': return x*y;
+            case '/': return x/y;
+            case EQ: return x == y;
+    	    case NEQ: return x != y;
+    	    case AND: return x && y;
+    	    case OR: return x || y;
+    	    default: return *success = false;
         }
     }
-    return 0;
 }
 
 uint32_t expr(char *e, bool *success)
@@ -315,19 +245,16 @@ uint32_t expr(char *e, bool *success)
 		*success = false;
 		return 0;
 	}
-    *success = true;
-	/*printf("\nPlease implement expr at expr.c\n");
+
+    /*
+	printf("\nPlease implement expr at expr.c\n");
 	fflush(stdout);
 	assert(0);
-	return 0;*/
-    for(int i = 0; i < nr_token; i ++) {
-        if(tokens[i].type == '*' && (i == 0 || IsCertainType(tokens[i - 1].type))) {
+	*/
+	for(int i = 0; i < nr_token; i ++) {
+        if(tokens[i].type == '*' && (i == 0 || is_operator(tokens[i-1].type)) ) {
             tokens[i].type = DEREF;
         }
-        else if (tokens[i].type == '-' && (i == 0 || IsCertainType(tokens[i - 1].type))) {
-            tokens[i].type = NEG;
-        }
-        //printf("%s,%d",tokens[i].str,tokens[i].type);
     }
-    return eval(0, nr_token-1, success);
+	return eval(0, nr_token-1, success);
 }

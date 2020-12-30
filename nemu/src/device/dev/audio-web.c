@@ -12,7 +12,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
  
-#define IPSTR "114.212.10.206"
+#define IPSTR "114.212.10.207"
 #define PORT 8088
 #define BUFSIZE 1024
 extern char stu_id[20];

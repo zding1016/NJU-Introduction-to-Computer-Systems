@@ -3,19 +3,6 @@
 
 #include <cpu-ref/alu_ref.h>
 
-//设置标志位
-void set_ZF(uint32_t result, size_t data_size);
-void set_SF(uint32_t result, size_t data_size);
-void set_PF(uint32_t result);
-void set_CF_add(uint32_t src, uint32_t dest, uint32_t result);
-void set_OF_ad(uint32_t src, uint32_t dest, uint32_t result, size_t data_size);
-void set_CF_sub(uint32_t src, uint32_t dest, size_t data_size);
-void set_CF_sbb(uint32_t src, uint32_t dest, size_t data_size);
-void set_OF_sb(uint32_t src, uint32_t dest, uint32_t result, size_t data_size);
-uint32_t alu_add_inc(uint32_t src, uint32_t dest, size_t data_size);
-
-
-
 // enable NEMU_REF_ALU to use reference implementation
 // #define NEMU_REF_ALU
 

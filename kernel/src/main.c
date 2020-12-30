@@ -26,7 +26,7 @@ void init()
 	 * is located at 0xc0030000, which is set by the linking options in Makefile.
 	 * Before setting up correct paging, no global variable can be used. */
 	init_page();
-	
+
 	/* After paging is enabled, transform %esp to virtual address. */
 	asm volatile("addl %0, %%esp"
 				 :
@@ -79,7 +79,6 @@ void init_cond()
 	 * Note that the output is actually performed only when
 	 * the serial port is available in NEMU.
 	 */
-	//BREAK_POINT;
 	Log("Hello, NEMU world!");
 
 #ifdef HAS_DEVICE_VGA
@@ -87,9 +86,7 @@ void init_cond()
 	video_mapping_write_test();
 #endif
 	/* Load the program. */
-	//BREAK_POINT;
 	uint32_t eip = loader();
-	//BREAK_POINT;
 #ifdef HAS_DEVICE_VGA
 	/* Read data in the video memory to check whether 
 	 * the test data is written sucessfully.
@@ -98,7 +95,6 @@ void init_cond()
 
 	/* Clear the test data we just written in the video memory. */
 	video_mapping_clear();
-	
 #endif
 
 #ifdef IA32_PAGE
