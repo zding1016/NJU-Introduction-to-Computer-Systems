@@ -35,6 +35,11 @@ void init_cpu(const uint32_t init_eip)
 	for (i = 0; i < 6; i++)
 	{
 		cpu.segReg[i].val = 0x0;
+		cpu.segReg[i].base = 0x0;
+		cpu.segReg[i].limit = 0x0;
+		cpu.segReg[i].type = 0x0;
+		cpu.segReg[i].privilege_level = 0x0;
+		cpu.segReg[i].soft_use = 0x0;
 	}
 #endif
 #ifdef IA32_INTR
@@ -62,8 +67,8 @@ void exec(uint32_t n)
 	{
 		if(!is_nemu_hlt)
 		{
-			instr_len = exec_inst(); //执行eip指向的指令
-			cpu.eip += instr_len; //eip指向下一条指令
+			instr_len = exec_inst();
+			cpu.eip += instr_len;
 			n--;
 
 			if (hit_break_rerun)
@@ -125,14 +130,13 @@ int exec_inst()
 {
 	uint8_t opcode = 0;
 	// get the opcode
-	opcode = instr_fetch(cpu.eip, 1); //读cpu.eip内存地址处，1字节数据（指令操作码）
-	
+	opcode = instr_fetch(cpu.eip, 1);
 //printf("opcode = %x, eip = %x\n", opcode, cpu.eip);
 // instruction decode and execution
 #ifdef NEMU_REF_INSTR
 	int len = __ref_opcode_entry[opcode](cpu.eip, opcode);
 #else
-	int len = opcode_entry[opcode](cpu.eip, opcode);//解码对应指令，返回指令长度
+	int len = opcode_entry[opcode](cpu.eip, opcode);
 #endif
 	return len;
 }

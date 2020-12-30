@@ -1,63 +1,60 @@
 #include "cpu/cpu.h"
+#include <stdarg.h>
 
-uint32_t get_mask(size_t data_size){
-    return (0xffffffff >> (32-data_size));
+uint32_t resize(uint32_t src, size_t data_size)
+{
+    return src & (0xFFFFFFFF >> (32-data_size)); 
 }
 
-//设置标志位
-void set_ZF(uint32_t result, size_t data_size){ 
-    result = result & get_mask(data_size);
-    uint32_t ans = (result == 0);
-    cpu.eflags.ZF = ans;
-}
-
-void set_PF(uint32_t result){
-    result = result & 0xff;
-    uint32_t ans = 0;
-    for (int i = 0; i < 8; i++){
-        ans += result & 1;
-        result = result >> 1;
+void multiresize(uint32_t cnt, uint32_t data_size, uint32_t *src, ...)
+{
+    va_list ap;
+    va_start(ap, src);
+    *src = resize(*src, data_size);
+    for (int i = 1; i < cnt; ++i) {
+        src = va_arg(ap, uint32_t*);
+        *src = resize(*src, data_size);
     }
-    cpu.eflags.PF = (ans % 2 == 0);
+    va_end(ap);
 }
 
-void set_SF(uint32_t result, size_t data_size){
-    uint32_t ans = (result >> (data_size - 1)) & 1;
-    cpu.eflags.SF = ans;
+bool high_bit(uint32_t src, size_t data_size)
+{
+    return resize(src, data_size) >> (data_size-1);
 }
 
-void set_CF_add(uint32_t src, uint32_t dest, uint32_t result){
-    cpu.eflags.CF = (result < src) || (result < dest);
+bool low_bit(uint32_t src) {
+    return src & 1;
 }
 
-void set_OF_ad(uint32_t src, uint32_t dest, uint32_t result, size_t data_size){
-    src = (src >> (data_size - 1)) & 1;
-    dest = (dest >> (data_size - 1)) & 1;
-    result = (result >> (data_size - 1)) & 1;
-    cpu.eflags.OF = (src && dest && !result) || (!src && !dest && result);
+void set_ZF(uint32_t res, size_t data_size)
+{
+    cpu.eflags.ZF = resize(res, data_size) == 0;
 }
 
-void set_OF_sb(uint32_t src, uint32_t dest, uint32_t result, size_t data_size){
-    src = (src >> (data_size - 1)) & 1;
-    dest = (dest >> (data_size - 1)) & 1;
-    result = (result >> (data_size - 1)) & 1;
-    cpu.eflags.OF = (src && !dest && result) || (!src && dest && !result);
+void set_SF(uint32_t res, size_t data_size)
+{
+    cpu.eflags.SF = high_bit(res, data_size);
 }
 
-
-void set_CF_sub(uint32_t src, uint32_t dest, size_t data_size){
-    src = sign_ext(src & get_mask(data_size), data_size);
-    dest = sign_ext(dest & get_mask(data_size), data_size);
-    cpu.eflags.CF = (dest < src);
+void set_OF(uint32_t src, uint32_t dest, uint32_t res, size_t data_size)
+{
+    cpu.eflags.OF = (high_bit(src, data_size) == high_bit(dest, data_size)) && (high_bit(src, data_size) != high_bit(res, data_size));
 }
 
-void set_CF_sbb(uint32_t src, uint32_t dest, size_t data_size){
-    src = sign_ext(src & get_mask(data_size), data_size);
-    dest = sign_ext(dest & get_mask(data_size), data_size);
-    if (cpu.eflags.CF == 1)
-        cpu.eflags.CF = (dest <= src);
-    else
-        cpu.eflags.CF = (dest < src);
+void set_CF(uint32_t src, uint32_t dest, uint32_t res, uint32_t cn_1, uint32_t cin, size_t data_size)
+{
+    cpu.eflags.CF = ((src+cn_1 < src) || (res < src+cn_1)) ^ cin;
+}
+
+void set_PF(uint32_t res)
+{
+    int cnt = 0;
+    for (int i = 1; i <= 8; ++i) {
+        cnt += res & 1;
+        res >>= 1;
+    }
+    cpu.eflags.PF = !(cnt & 1);
 }
 
 uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
@@ -65,41 +62,14 @@ uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_add(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	src = src & get_mask(data_size);
-	dest = dest & get_mask(data_size);
-	uint32_t result = src + dest;
-	result = result & get_mask(data_size);
-	set_ZF(result,data_size);
-	set_PF(result);
-	set_SF(result,data_size);
-	set_OF_ad(src,dest,result,data_size);
-	set_CF_add(src,dest,result);
-	return result;
-#endif
-}
-
-uint32_t alu_add_inc(uint32_t src, uint32_t dest, size_t data_size)
-{
-#ifdef NEMU_REF_ALU
-	return __ref_alu_add(src, dest, data_size);
-#else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	src = src & get_mask(data_size);
-	dest = dest & get_mask(data_size);
-	uint32_t result = src + dest;
-	result = result & get_mask(data_size);
-	set_ZF(result,data_size);
-	set_PF(result);
-	set_SF(result,data_size);
-	set_OF_ad(src,dest,result,data_size);
-	return result;
+	uint32_t res = src+dest;
+	multiresize(3, data_size, &src, &dest, &res);
+	set_ZF(res, data_size);
+	set_SF(res, data_size);
+	set_PF(res);
+	set_OF(src, dest, res, data_size);
+	set_CF(src, dest, res, 0, 0, data_size);
+	return res;
 #endif
 }
 
@@ -108,18 +78,14 @@ uint32_t alu_adc(uint32_t src, uint32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_adc(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	uint32_t CF_before = cpu.eflags.CF;
-	uint32_t result = alu_add(src, dest, data_size);
-	uint32_t CF_mid = cpu.eflags.CF;
-	if (!CF_before) return result;
-	result = alu_add(result, CF_before, data_size);
-	if (CF_mid) cpu.eflags.CF = 1;
-	set_OF_ad(src,dest,result,data_size);
-	return result;
+	uint32_t res = src+dest+cpu.eflags.CF;
+	multiresize(3, data_size, &src, &dest, &res);
+	set_ZF(res, data_size);
+	set_SF(res, data_size);
+	set_PF(res);
+	set_OF(src, dest, res, data_size);
+	set_CF(src, dest, res, cpu.eflags.CF, 0, data_size);
+	return res;
 #endif
 }
 
@@ -128,18 +94,15 @@ uint32_t alu_sub(uint32_t src, uint32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_sub(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	uint32_t result = dest - src;
-	result = result & get_mask(data_size);
-	set_ZF(result,data_size);
-	set_PF(result);
-	set_SF(result,data_size);
-	set_CF_sub(src, dest, data_size);
-    set_OF_sb(src,dest,result,data_size);
-	return result;
+    src = ~src;
+    uint32_t res = src+dest+1;
+    multiresize(3, data_size, &src, &dest, &res);
+	set_ZF(res, data_size);
+	set_SF(res, data_size);
+	set_PF(res);
+	set_OF(src, dest, res, data_size);
+	set_CF(src, dest, res, 1, 1, data_size);
+	return res;
 #endif
 }
 
@@ -148,18 +111,15 @@ uint32_t alu_sbb(uint32_t src, uint32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_sbb(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	uint32_t result = dest - src - cpu.eflags.CF;
-	result = result & get_mask(data_size);
-	set_ZF(result,data_size);
-	set_PF(result);
-	set_SF(result,data_size);
-	set_OF_sb(src,dest,result,data_size);
-	set_CF_sbb(src, dest, data_size);
-	return result;
+    src = ~src;
+    uint32_t res = src+dest+(!cpu.eflags.CF);
+    multiresize(3, data_size, &src, &dest, &res);
+	set_ZF(res, data_size);
+	set_SF(res, data_size);
+	set_PF(res);
+	set_OF(src, dest, res, data_size);
+	set_CF(src, dest, res, !cpu.eflags.CF, 1, data_size);
+	return res;
 #endif
 }
 
@@ -168,13 +128,9 @@ uint64_t alu_mul(uint32_t src, uint32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_mul(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	uint64_t result = (uint64_t) (src & get_mask(data_size)) * (dest & get_mask(data_size));
-	cpu.eflags.OF = cpu.eflags.CF = (result >> data_size) && 1;
-	return result;
+    uint64_t res = (uint64_t)src*(uint64_t)dest;
+    cpu.eflags.CF = cpu.eflags.OF = ((res >> data_size) & (0xFFFFFFFF >> (32-data_size))) > 0;
+    return res;
 #endif
 }
 
@@ -183,13 +139,9 @@ int64_t alu_imul(int32_t src, int32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_imul(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	src = sign_ext(src & get_mask(data_size), data_size);
-	dest = sign_ext(dest & get_mask(data_size), data_size);
-	return (int64_t)(src) * dest;
+    int64_t res = (int64_t)src*(int64_t)dest;
+    cpu.eflags.CF = cpu.eflags.OF = ((res >> data_size) & (0xFFFFFFFF >> (32-data_size))) > 0;
+    return res;
 #endif
 }
 
@@ -199,17 +151,9 @@ uint32_t alu_div(uint64_t src, uint64_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_div(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	assert (src != 0);
-	dest = dest & (0xffffffffffffffff >> (64 - 2 * data_size));
-	src = src & (0xffffffffffffffff >> (64 - 2 * data_size));
-	uint64_t res = dest / src;
-	assert(((res >> data_size) & 1) == 0);
-	return res & (0xffffffff >> (64 - data_size));
-	
+    assert(src);
+    uint32_t res = dest/src;
+    return resize(res, data_size);
 #endif
 }
 
@@ -219,12 +163,9 @@ int32_t alu_idiv(int64_t src, int64_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_idiv(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	assert (src != 0);
-	return (int32_t)(dest / src);
+    assert(src);
+    uint32_t res = dest/src;
+    return resize(res, data_size);
 #endif
 }
 
@@ -233,12 +174,8 @@ uint32_t alu_mod(uint64_t src, uint64_t dest)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_mod(src, dest);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	assert (src != 0);
-	return (uint32_t)(dest % src);
+    uint32_t res = dest%src;
+    return res;
 #endif
 }
 
@@ -247,12 +184,8 @@ int32_t alu_imod(int64_t src, int64_t dest)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_imod(src, dest);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	assert (src != 0);
-	return (int32_t)(dest % src);
+    uint32_t res = dest%src;
+    return res;
 #endif
 }
 
@@ -261,17 +194,13 @@ uint32_t alu_and(uint32_t src, uint32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_and(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	uint32_t result = src & dest;
-	cpu.eflags.OF = cpu.eflags.CF = 0;
-	result = result & get_mask(data_size);
-	set_ZF(result,data_size);
-	set_PF(result);
-	set_SF(result,data_size);
-	return result;
+    uint32_t res = src & dest;
+    multiresize(1, data_size, &res);
+    set_ZF(res, data_size);
+    set_PF(res);
+    set_SF(res, data_size);
+    cpu.eflags.CF = cpu.eflags.OF = 0;
+    return res;
 #endif
 }
 
@@ -280,17 +209,13 @@ uint32_t alu_xor(uint32_t src, uint32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_xor(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	uint32_t result = src ^ dest;
-	cpu.eflags.OF = cpu.eflags.CF = 0;
-	result = result & get_mask(data_size);
-	set_ZF(result,data_size);
-	set_PF(result);
-	set_SF(result,data_size);
-	return result;
+    uint32_t res = src ^ dest;
+    multiresize(1, data_size, &res);
+    set_ZF(res, data_size);
+    set_PF(res);
+    set_SF(res, data_size);
+    cpu.eflags.CF = cpu.eflags.OF = 0;
+    return res;
 #endif
 }
 
@@ -299,17 +224,13 @@ uint32_t alu_or(uint32_t src, uint32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_or(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	uint32_t result = src | dest;
-	cpu.eflags.OF = cpu.eflags.CF = 0;
-	result = result & get_mask(data_size);
-	set_ZF(result,data_size);
-	set_PF(result);
-	set_SF(result,data_size);
-	return result;
+    uint32_t res = src | dest;
+    multiresize(1, data_size, &res);
+    set_ZF(res, data_size);
+    set_PF(res);
+    set_SF(res, data_size);
+    cpu.eflags.CF = cpu.eflags.OF = 0;
+    return res;
 #endif
 }
 
@@ -318,11 +239,15 @@ uint32_t alu_shl(uint32_t src, uint32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_shl(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	return alu_sal(src,dest,data_size);
+    multiresize(2, data_size, &src, &dest);
+    uint32_t res = dest << src;
+    multiresize(1, data_size, &res);
+    set_ZF(res, data_size);
+    set_PF(res);
+    set_SF(res, data_size);
+    cpu.eflags.CF = src ? high_bit(dest << (src-1), data_size) : cpu.eflags.CF;
+    cpu.eflags.OF = src == 1 ? high_bit(res, data_size) : cpu.eflags.OF;
+    return res;
 #endif
 }
 
@@ -331,20 +256,15 @@ uint32_t alu_shr(uint32_t src, uint32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_shr(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	cpu.eflags.CF = 0;
-	if (src <= data_size)
-	    cpu.eflags.CF = (dest >> (src - 1)) & 1;
-	uint32_t result = dest;
-	result = result & get_mask(data_size);
-	result = result >> src;
-	set_ZF(result,data_size);
-	set_PF(result);
-	set_SF(result,data_size);
-	return result;
+    multiresize(2, data_size, &src, &dest);
+    uint32_t res = dest >> src;
+    multiresize(1, data_size, &res);
+    set_ZF(res, data_size);
+    set_PF(res);
+    set_SF(res, data_size);
+    cpu.eflags.CF = src ? low_bit(dest >> (src-1)) : cpu.eflags.CF;
+    cpu.eflags.OF = src == 1 ? high_bit(res, data_size) : cpu.eflags.OF;
+    return res;
 #endif
 }
 
@@ -353,25 +273,16 @@ uint32_t alu_sar(uint32_t src, uint32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_sar(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	uint32_t high_sign = (dest >> (data_size - 1)) & 1;
-	if (!high_sign) return alu_shr(src, dest, data_size);
-	cpu.eflags.CF = 0;
-	if (src <= data_size)
-	    cpu.eflags.CF = (dest >> (src - 1)) & 1;
-	uint32_t result = dest;
-	result = result & get_mask(data_size);
-	result = result >> src;
-	uint32_t number_or_for = 0xffffffff << (data_size - src);
-	result = result | number_or_for;
-	result = result & get_mask(data_size);
-	set_ZF(result,data_size);
-	set_PF(result);
-	set_SF(result,data_size);
-	return result;
+    multiresize(2, data_size, &src, &dest);
+    uint32_t res = dest >> src;
+    res = high_bit(dest, data_size) ? ((0xFFFFFFFF << (data_size-src)) | res) : res;
+    multiresize(1, data_size, &res);
+    set_ZF(res, data_size);
+    set_PF(res);
+    set_SF(res, data_size);
+    cpu.eflags.CF = src ? low_bit(dest >> (src-1)) : cpu.eflags.CF;
+    cpu.eflags.OF = src == 1 ? 0 : cpu.eflags.OF;
+    return res;
 #endif
 }
 
@@ -380,18 +291,14 @@ uint32_t alu_sal(uint32_t src, uint32_t dest, size_t data_size)
 #ifdef NEMU_REF_ALU
 	return __ref_alu_sal(src, dest, data_size);
 #else
-	/*printf("\e[0;31mPlease implement me at alu.c\e[0m\n");
-	fflush(stdout);
-	assert(0);
-	return 0;*/
-	uint32_t result = dest << src;
-	result = result & get_mask(data_size); 
-	cpu.eflags.CF = 0;
-	if (src <= data_size) 
-	    cpu.eflags.CF = (dest >> (data_size - src)) & 1;
-	set_ZF(result,data_size);
-	set_PF(result);
-	set_SF(result,data_size);
-	return result;
+    multiresize(2, data_size, &src, &dest);
+    uint32_t res = dest << src;
+    multiresize(1, data_size, &res);
+    set_ZF(res, data_size);
+    set_PF(res);
+    set_SF(res, data_size);
+    cpu.eflags.CF = src ? high_bit((dest << (src-1)), data_size) : cpu.eflags.CF;
+    cpu.eflags.OF = src == 1 ? high_bit(res, data_size) : cpu.eflags.OF;
+    return res;
 #endif
 }
