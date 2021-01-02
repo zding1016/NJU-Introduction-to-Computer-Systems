@@ -23,9 +23,10 @@ uint32_t paddr_read(paddr_t paddr, size_t len)
 {
 	uint32_t ret = 0;
 #ifdef HAS_DEVICE_VGA
-	int map_NO = is_mmio(paddr);
-	if (~map_NO) return mmio_read(paddr, len, map_NO);
+	int map_flag = is_mmio(paddr);
+	if (~map_flag) return mmio_read(paddr, len, map_flag);
 #endif
+
 #ifdef CACHE_ENABLED
     ret = cache_read(paddr, len);
 #else
@@ -37,8 +38,8 @@ uint32_t paddr_read(paddr_t paddr, size_t len)
 void paddr_write(paddr_t paddr, size_t len, uint32_t data)
 {
 #ifdef HAS_DEVICE_VGA
-    int map_NO = is_mmio(paddr);
-    if (~map_NO) mmio_write(paddr, len, data, map_NO);
+    int map_flag = is_mmio(paddr);
+    if (~map_flag) mmio_write(paddr, len, data, map_flag);
 #endif
 #ifdef CACHE_ENABLED
     cache_write(paddr, len, data);
@@ -51,10 +52,10 @@ uint32_t laddr_read(laddr_t laddr, size_t len)
 {
 #ifdef IA32_PAGE
     if (cpu.cr0.pg) {
-        uint32_t offset = laddr & 0x00000FFF;
-        if (offset+len-1 > 0x00000FFF) {
-            int len1 = 0x00000FFF-offset+1;
-            return (laddr_read(laddr+len1, len-len1) << (len1 << 3)) | laddr_read(laddr, len1);
+        uint32_t offset = laddr & 0xfff;
+        if (offset + len-1 > 0xfff) {
+            int len1 = 0xfff - offset + 1;
+            return (laddr_read(laddr + len1, len - len1) << (len1 << 3)) | laddr_read(laddr, len1);
         } else {
             laddr = page_translate(laddr);
             return paddr_read(laddr, len);
@@ -68,11 +69,11 @@ void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 {
 #ifdef IA32_PAGE
     if (cpu.cr0.pg) {
-        uint32_t offset = laddr & 0x00000FFF;
-        if (offset+len-1 > 0x00000FFF) {
-            int len1 = 0x00000FFF-offset+1;
+        uint32_t offset = laddr & 0xfff;
+        if (offset+len-1 > 0xfff) {
+            int len1 = 0xfff - offset + 1;
             laddr_write(laddr, len1, data & (0xFFFFFFFF >> (32-(len1 << 3))));
-            laddr_write(laddr+len1, len-len1, data >> (len1 << 3));
+            laddr_write(laddr + len1, len - len1, data >> (len1 << 3));
         } else {
             laddr = page_translate(laddr);
             paddr_write(laddr, len, data);

@@ -38,9 +38,6 @@ uint32_t loader()
 		if (ph->p_type == PT_LOAD)
 		{
 
-			// remove this panic!!!
-			//panic("Please implement the loader");
-/* TODO: copy the segment from the ELF file to its proper memory area */
 #ifdef IA32_PAGE
             uint32_t paddr = mm_malloc(ph->p_vaddr, ph->p_memsz);
 #else

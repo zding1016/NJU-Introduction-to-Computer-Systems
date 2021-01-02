@@ -11,55 +11,68 @@ inline uint32_t internal_normalize(uint32_t sign, int32_t exp, uint64_t sig_grs)
 
 	// normalization
 	bool overflow = false; // true if the result is INFINITY or 0 during normalize
+	uint32_t sticky=0;
 
 	if ((sig_grs >> (23 + 3)) > 1 || exp < 0)
 	{
 		// normalize toward right
-		while ((((sig_grs >> (23 + 3)) > 1) && exp < 0xff) // condition 1
+		while ((((sig_grs >> (23 + 3)) > 1) && exp < 0xff) // condition 1：尾数整数部分过多且阶码没有上溢
 			   ||										   // or
-			   (sig_grs > 0x04 && exp < 0)				   // condition 2
+			   (sig_grs > 0x04 && exp < 0)				   // condition 2：尾数小数部分没有过小且阶码没有下溢
 			   )
+		//进行右移
 		{
-			/* TODO: shift right, pay attention to sticky bit*/
-			sig_grs = (sig_grs >> 1) | (sig_grs & 1);
-			exp++;
+            sticky=(sig_grs&1)|sticky;
+            sig_grs=sig_grs>>1;
+            sig_grs=sig_grs|sticky;
+            exp++;
 		}
-
-		if (exp >= 0xff)
+        //阶码上溢
+		if (exp >= 0xff) 
 		{
 			/* TODO: assign the number to infinity */
-			exp = 0xff;
-			sig_grs = 0;
-			overflow = true;
+            exp=0xff;
+            sig_grs=0;  //尾数全部清零
+            overflow=true;
 		}
+		//非规格化数
 		if (exp == 0)
 		{
 			// we have a denormal here, the exponent is 0, but means 2^-126,
 			// as a result, the significand should shift right once more
 			/* TODO: shift right, pay attention to sticky bit*/
-			sig_grs = (sig_grs >> 1) | (sig_grs & 1);
+            sticky=(sig_grs&1)|sticky;
+            sig_grs=sig_grs>>1;
+            sig_grs=sig_grs|sticky;
 		}
+		//数值过小，清零
 		if (exp < 0)
 		{
 			/* TODO: assign the number to zero */
-			exp = sig_grs = 0;
-			overflow = true;
+			exp=0;
+			sig_grs=0;
+			overflow=true;
 		}
 	}
+	//没有隐藏位
 	else if (((sig_grs >> (23 + 3)) == 0) && exp > 0)
 	{
 		// normalize toward left
 		while (((sig_grs >> (23 + 3)) == 0) && exp > 0)
 		{
 			/* TODO: shift left */
-			sig_grs <<= 1;
+			sig_grs=sig_grs<<1;
 			exp--;
+			
 		}
+		//规格化失败
 		if (exp == 0)
 		{
 			// denormal
 			/* TODO: shift right, pay attention to sticky bit*/
-			sig_grs = (sig_grs >> 1) | (sig_grs & 1);
+			sticky=(sig_grs&1)|sticky;
+            sig_grs=sig_grs>>1;
+            sig_grs=sig_grs|sticky;
 		}
 	}
 	else if (exp == 0 && sig_grs >> (23 + 3) == 1)
@@ -70,19 +83,26 @@ inline uint32_t internal_normalize(uint32_t sign, int32_t exp, uint64_t sig_grs)
 
 	if (!overflow)
 	{
-		/* TODO: round up and remove the GRS bits */
-		uint32_t x = ((sig_grs & 0x7) == 0x4) ? ((sig_grs >> 3) & 1) : ((sig_grs & 0x7) > 0x4);
-		sig_grs = (sig_grs >> 3)+x;
-		if ((sig_grs >> 23) > 1) {
-		    sig_grs = (sig_grs >> 1) | (sig_grs & 1);
+		uint32_t grs=sig_grs&7;
+		sig_grs=sig_grs>>3;
+		//大于4进位，或者等于四但尾数为奇数，进位
+		if(grs>4||(grs==4&&sig_grs&1))
+		{
+		    sig_grs++;
+		}
+		//判断隐藏位是否进位
+		if(exp==0&&sig_grs>>23)//非规格化数有隐藏位
+		{
 		    exp++;
-		    if (exp >= 0xff) {
-		        exp = 0xff;
-		        sig_grs = 0;
-		        overflow = true;
+		}else if(sig_grs>>23>1)//规格化数整数部分大于2位
+		{
+		    sig_grs=sig_grs>>1;
+		    exp++;
+		    if(exp==0xff) //溢出
+		    {
+		        exp=0xff;
+                sig_grs=0;  //尾数全部清零
 		    }
-		} else if (exp == 0 && (sig_grs >> 23) == 1) {
-		    exp++;
 		}
 	}
 
@@ -140,6 +160,7 @@ uint32_t internal_float_add(uint32_t b, uint32_t a)
 		return b;
 	}
 
+    //b大a小
 	if (fa.exponent > fb.exponent)
 	{
 		fa.val = b;
@@ -158,7 +179,9 @@ uint32_t internal_float_add(uint32_t b, uint32_t a)
 	uint32_t shift = 0;
 
 	/* TODO: shift = ? */
-	shift = (fb.exponent == 0 ? fb.exponent+1 : fb.exponent)-(fa.exponent == 0 ? fa.exponent+1 : fa.exponent);
+    shift=fb.exponent-fa.exponent;
+    if(fb.exponent==0) shift++;
+    if(fa.exponent==0) shift--; //非规格化处理
 
 	sig_a = (sig_a << 3); // guard, round, sticky
 	sig_b = (sig_b << 3);
@@ -282,8 +305,11 @@ uint32_t internal_float_mul(uint32_t b, uint32_t a)
 
 	sig_res = sig_a * sig_b; // 24b * 24b
 	uint32_t exp_res = 0;
+
 	/* TODO: exp_res = ? leave space for GRS bits. */
-	exp_res = fa.exponent+fb.exponent-127-20;
+	sig_res=sig_res<<3;
+    exp_res=fa.exponent+fb.exponent-127-23;
+    
 	return internal_normalize(f.sign, exp_res, sig_res);
 }
 
