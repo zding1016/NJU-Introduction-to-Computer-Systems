@@ -41,6 +41,7 @@ void paddr_write(paddr_t paddr, size_t len, uint32_t data)
     int map_flag = is_mmio(paddr);
     if (~map_flag) mmio_write(paddr, len, data, map_flag);
 #endif
+
 #ifdef CACHE_ENABLED
     cache_write(paddr, len, data);
 #else
@@ -54,8 +55,8 @@ uint32_t laddr_read(laddr_t laddr, size_t len)
     if (cpu.cr0.pg) {
         uint32_t offset = laddr & 0xfff;
         if (offset + len-1 > 0xfff) {
-            int len1 = 0xfff - offset + 1;
-            return (laddr_read(laddr + len1, len - len1) << (len1 << 3)) | laddr_read(laddr, len1);
+            int first_len = 0xfff - offset + 1;
+            return (laddr_read(laddr + first_len, len - first_len) << (first_len << 3)) | laddr_read(laddr, first_len);
         } else {
             laddr = page_translate(laddr);
             return paddr_read(laddr, len);
@@ -71,9 +72,9 @@ void laddr_write(laddr_t laddr, size_t len, uint32_t data)
     if (cpu.cr0.pg) {
         uint32_t offset = laddr & 0xfff;
         if (offset+len-1 > 0xfff) {
-            int len1 = 0xfff - offset + 1;
-            laddr_write(laddr, len1, data & (0xFFFFFFFF >> (32-(len1 << 3))));
-            laddr_write(laddr + len1, len - len1, data >> (len1 << 3));
+            int first_len = 0xfff - offset + 1;
+            laddr_write(laddr, first_len, data & (0xFFFFFFFF >> (32-(first_len << 3))));
+            laddr_write(laddr + first_len, len - first_len, data >> (first_len << 3));
         } else {
             laddr = page_translate(laddr);
             paddr_write(laddr, len, data);
