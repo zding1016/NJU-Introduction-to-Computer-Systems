@@ -13,7 +13,7 @@ make_instr_func(ret_near_imm16) {
     imm.type = OPR_IMM;
     imm.sreg = SREG_CS;
     imm.data_size = 16;
-    imm.addr = eip+1;
+    imm.addr = eip + 1;
     operand_read(&imm);
     cpu.esp += imm.val;
     return 0;

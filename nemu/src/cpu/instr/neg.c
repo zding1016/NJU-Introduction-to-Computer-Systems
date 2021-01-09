@@ -4,8 +4,7 @@ Put the implementations of `neg' instructions here.
 */
 static void instr_execute_1op() {
     operand_read(&opr_src);
-    if (!opr_src.val) cpu.eflags.CF = 0;
-    else cpu.eflags.CF = 1;
+    if (!opr_src.val) cpu.eflags.CF = 0; else cpu.eflags.CF = 1;
     opr_src.val = -opr_src.val;
     operand_write(&opr_src);
 }

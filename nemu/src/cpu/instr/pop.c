@@ -2,16 +2,6 @@
 /*
 Put the implementations of `pop' instructions here.
 */
-uint32_t pop_(int datasize) {
-    OPERAND rm;
-    rm.type = OPR_MEM;
-    rm.sreg = SREG_SS;
-    rm.addr = cpu.esp;
-    rm.data_size = datasize;
-    operand_read(&rm);
-    cpu.esp += datasize >> 3;
-    return rm.val;
-}
 
 static void instr_execute_1op() {
     opr_src.val = pop_(opr_src.data_size);
@@ -30,4 +20,16 @@ make_instr_func(popa) {
         else cpu.gpr[i]._32 = val;
     }
     return len;
+}
+
+
+uint32_t pop_(int datasize) {
+    OPERAND rm;
+    rm.type = OPR_MEM;
+    rm.sreg = SREG_SS;
+    rm.addr = cpu.esp;
+    rm.data_size = datasize;
+    operand_read(&rm);
+    cpu.esp += datasize >> 3;
+    return rm.val;
 }
