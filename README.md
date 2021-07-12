@@ -1,1 +1,1 @@
-# Course project of Introduction to Computer Systems:NEMU(NJU Emulator)
+# Course project of ICS: NEMU(NJU Emulator)
